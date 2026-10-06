@@ -4,7 +4,12 @@ Título: `[ID ou Tipo] Texto da entrega`
 - Sem ID, o tipo no lugar: `[ADR] ...`, `[Técnico] ...`, `[Harness] ...`.
 - Sub-issue: o ID da issue mãe. Fora do roadmap: `[Técnico] ...`, `[Bug] ...`.
 
-Metadados: milestone da fase; label de tipo (`caso-de-uso`, `rnf`, `técnico`, `adr`, `harness`, `bug`); label de modo (`manual`, `pareado`, `delegado`); `não-planejado` quando o item entrou com a fase já em andamento.
+Metadados:
+
+- Milestone da fase.
+- Label de tipo: `caso-de-uso`, `rnf`, `técnico`, `adr`, `harness` ou `bug`.
+- Label de modo: `manual`, `pareado` ou `delegado`.
+- `não-planejado` quando o item entrou depois do roadmap validado.
 
 Corpo:
 

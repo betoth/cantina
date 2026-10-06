@@ -31,8 +31,11 @@ Cada pergunta traz como o mercado resolve, as opções comparadas e a recomenda�
 |---|---|---|
 | ... | ... | ... |
 
-- Opção A: prós; contras; limitações.
-- Opção B: prós; contras; limitações.
+- Opção A:
+  - Prós: um por item.
+  - Contras: um por item.
+  - Limitações: o que ela não resolve, em que escala deixa de servir.
+- Opção B: mesma estrutura.
 
 **Custo-benefício.** Construir, operar e reverter cada opção, contra o benefício na escala real do projeto.
 
