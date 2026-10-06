@@ -41,10 +41,10 @@ Do plano ao código, cada nível detalha o anterior:
 2. **Testes** derivados dos critérios de aceite que a tarefa cobre.
 3. **Implementação.**
 4. **Verificação:** `make check` (build, lint, testes) verde. Enquanto o Makefile não existir, `go build ./... && go vet ./... && go test ./...`.
-5. **Diário e roadmap:** entrada do dia em `docs/journal.md`, pela skill `/journal`, e marcação no roadmap da entrega que a tarefa conclui, para irem no mesmo PR e passarem pela revisão.
-6. **Revisão** pelo agent `reviewer`, sobre a branch. Bloqueante: corrigir (pelo modo da tarefa) ou o dono descarta com motivo. Sugestão não aplicada: o dono confirma se segue com ela pendente. Depois de corrigir bloqueante, nova rodada; só bloqueante obriga outra rodada. Se ainda houver bloqueante após a terceira rodada, parar e pedir ao dono para decidir.
-7. **PR** e testes do card, pela skill `/cards`.
-8. **Checkpoint de entendimento:** ao concluir uma tarefa, perguntar ao dono se quer rodar o `/checkpoint`. Só ele aciona.
+5. **Checkpoint de entendimento:** perguntar ao dono se quer rodar o `/checkpoint`. Só ele aciona.
+6. **Diário e roadmap:** entrada do dia em `docs/journal.md`, pela skill `/journal` (com os pontos do checkpoint, se houver), e marcação no roadmap da entrega que a tarefa conclui, para irem no mesmo PR e passarem pela revisão.
+7. **Revisão** pelo agent `reviewer`, sobre a branch. Bloqueante: corrigir (pelo modo da tarefa) ou o dono descarta com motivo. Sugestão não aplicada: o dono confirma se segue com ela pendente. Depois de corrigir bloqueante, nova rodada; só bloqueante obriga outra rodada. Se ainda houver bloqueante após a terceira rodada, parar e pedir ao dono para decidir. Mudança depois do PR aberto: nova rodada e seção `## Review` do PR atualizada.
+8. **PR** e testes do card, pela skill `/cards`.
 
 Pronto = `make check` verde + diário e roadmap atualizados + revisão sem bloqueante pendente + testes do card marcados.
 
