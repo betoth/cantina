@@ -32,7 +32,7 @@ Entradas em ordem cronológica, a mais nova no fim do arquivo:
 
 O diário é pessoal: mostra a evolução do projeto para quem se interessar, não é relatório. O detalhe da execução fica nas issues.
 
-- Uma entrada por dia. Se já existir entrada de hoje, completar essa entrada e ajustar o assunto do título para cobrir o dia.
+- Uma entrada por dia. Se já existir entrada de hoje, completar essa entrada e ajustar o assunto do título para cobrir o dia. Dia com trabalho em duas fases: `Fases N e M`.
 - Primeira pessoa, na voz do usuário ("decidi", "achei que", "percebi").
 - **Feito:** dois ou três parágrafos curtos ou linhas sobre o essencial, com link para issues e PRs. Sem listar arquivo por arquivo.
 - **Decisões:** o que foi decidido e o caminho até lá, principalmente quando houve mudança de ideia. Inclui decisões de processo. Decisão com ADR: uma linha com o link, sem repetir a justificativa.
