@@ -41,6 +41,7 @@ Ao criar, replanejar ou quando pedido, verificar e reportar uma lacuna por vez:
 
 ## Atualização
 
+- Item que entra numa fase já `em andamento`: marcar com `*(não planejado)*` depois do texto.
 - Entrega concluída: marcar o checkbox. Fase com todas as entregas marcadas e critério de pronto atendido: situação `concluída`.
 
 ## Fechamento
