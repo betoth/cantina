@@ -30,10 +30,10 @@ Specs são trabalho pareado: você propõe, o usuário revisa e decide.
 
 4. Listar para si as lacunas que impedem escrever critérios de aceite testáveis: questões em aberto do `domain.md` que afetam esta funcionalidade, casos de erro sem comportamento definido, regras ambíguas.
 5. Perguntar ao usuário sobre cada lacuna, com contexto curto e uma recomendação.
+6. Tamanho: a spec entrega valor observável pelo ator (ou é base reaproveitada por várias, como o ledger) em até 6 tarefas. Se passar disso, propor a divisão antes de escrever.
 
 ## Escrita
 
-6. Tamanho: a spec entrega valor observável pelo ator (ou é base reaproveitada por várias, como o ledger) em até 6 tarefas. Se passar disso, propor a divisão antes de escrever.
 7. Próximo número: maior `NNNN` em `docs/specs/` + 1 (a primeira é 0001; criar a pasta se não existir). Nome do arquivo: `NNNN-nome-em-kebab-case.md`, em português.
 8. Preencher todas as seções do template, incluindo os casos de uso que a spec implementa e os requisitos não funcionais que ela precisa cumprir: os da fase atual e todos os já entregues em fases anteriores que se apliquem (consultar o roadmap). Status `rascunho`, data de hoje.
 9. Fluxo: fluxograma Mermaid obrigatório, escrito antes dos critérios de aceite, com todas as decisões e caminhos de erro; cada caminho de erro tem linha correspondente na tabela de erros. Sequência: diagrama Mermaid obrigatório quando o fluxo atravessa mais de um serviço; omitir a seção caso contrário.

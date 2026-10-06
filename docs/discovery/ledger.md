@@ -3,10 +3,28 @@
 - Motivação: decisões da spec 0001 (ledger) que mudam o modelo e são caras de reverter. O ledger é o maior risco técnico do projeto (Fase 1).
 - Histórico:
   - 2026-10-05: criação (perguntas 1 a 15).
-  - 2026-10-06: análise de dois projetos de estudo e do SQL Server Ledger; lado normal (pergunta 5); adaptação ao template da skill `/discovery`; aprofundamento de concorrência (perguntas 2, 3 e 12).
-- Referências pesquisadas: TigerBeetle, Modern Treasury, Formance, Square Books, Stripe, Uber LedgerStore, pgledger, SQL Server Ledger, documentação do Postgres, AWS, dois projetos de estudo (Fluxo-De-Caixa, simple-ledger). Lista completa em [Fontes](#fontes).
+  - 2026-10-06:
+    - análise de dois projetos de estudo e do SQL Server Ledger;
+    - lado normal (pergunta 5);
+    - adaptação ao template da skill `/discovery`;
+    - aprofundamento de concorrência (perguntas 2, 3 e 12);
+    - correções da revisão: savepoint na recusa e ordem global de travamento (pergunta 3), bloqueio pela direção do lançamento (pergunta 2).
+- Referências pesquisadas (lista completa em [Fontes](#fontes)):
+  - ledgers: TigerBeetle, Modern Treasury, Formance, Square Books, Stripe, Uber LedgerStore, pgledger, SQL Server Ledger;
+  - documentação: Postgres, AWS;
+  - projetos de estudo: Fluxo-De-Caixa, simple-ledger.
 
-Cada pergunta traz como o mercado resolve, as opções comparadas e a recomendação para o projeto. Recomendação não é decisão: as decisões saem nas ADRs, no `domain.md` e nas specs (ver [Saídas](#saídas)).
+Cada pergunta traz:
+
+- como o mercado resolve;
+- as opções comparadas;
+- a recomendação para o projeto.
+
+Recomendação não é decisão. As decisões saem (ver [Saídas](#saídas)):
+
+- nas ADRs;
+- no `domain.md`;
+- nas specs.
 
 ## Resumo das recomendações
 
@@ -14,7 +32,7 @@ Cada pergunta traz como o mercado resolve, as opções comparadas e a recomenda�
 |---|---|---|
 | 1 | Partição | livro (`Book`) como ID opaco; um por escola no MVP |
 | 2 | Concorrência no saldo | update condicional (balance locking) em `READ COMMITTED`, com bloqueio para débito na mesma condição e contas em ordem de ID |
-| 3 | Contas quentes | todas as contas com saldo materializado e síncrono; débito na ordem natural da compra; medir na Fase 6 com cenário concentrado |
+| 3 | Contas quentes | todas as contas com saldo materializado e síncrono; ordem global de travamento; escritas condicionais num savepoint; medir na Fase 6 com cenário concentrado |
 | 4 | Duas fases | não no MVP |
 | 5 | Saldos | um saldo só (lançado), pelo lado normal da conta |
 | 6 | Fronteira de dados | ledger guarda só o contábil; motivo por código; detalhes no canteen |
@@ -92,7 +110,8 @@ Cada pergunta traz como o mercado resolve, as opções comparadas e a recomenda�
 **Eliminatórios e critérios.**
 
 - Eliminatórios:
-  - Invariante 4 do `domain.md`: conta que não pode ficar negativa nunca fica negativa; conta bloqueada para débito não é debitada.
+  - Invariante 4 do `domain.md`: conta que não pode ficar negativa nunca fica negativa.
+  - Bloqueio de carteira (`domain.md`): carteira bloqueada não é debitada; créditos continuam entrando.
   - RNF-CARGA-03: 20 compras simultâneas na mesma carteira; todas respondem, aprovadas ou recusadas, **sem erro**.
   - RNF-CARGA-02: p99 da autorização < 200 ms a 100 compras/s.
   - RNF-AUD-06 e ADR 0004: débito, compra, auditoria e outbox na mesma transação do Postgres.
@@ -184,7 +203,7 @@ No volume do projeto (~1 compra/s por cantina), A e B têm o mesmo desempenho; A
 **Riscos e limitações.** Pre-mortem ("um ano depois, A deu errado"):
 
 - Alguém acrescentou uma checagem prévia em Go (`SELECT` do saldo, depois `UPDATE` sem condição) e reabriu a janela de *lost update*. Mitigação: o teste da RNF-CARGA-03 roda em todo `make check`; a condição de saldo fica só no `WHERE`.
-- O bloqueio para débito foi checado fora do `UPDATE` e uma compra passou durante o bloqueio. Mitigação: `AND NOT debit_blocked` na mesma condição.
+- O bloqueio para débito foi checado fora do `UPDATE` e uma compra passou durante o bloqueio. Mitigação: o bloqueio na mesma condição do saldo, só para lançamento que diminui o saldo (direção oposta ao lado normal), para os créditos continuarem entrando.
 - Deadlock entre estorno (receita → carteira) e compra (carteira → receita) simultâneos. Mitigação: contas sempre atualizadas em ordem de ID; teste com movimentos nos dois sentidos.
 - Transação longa (chamada externa dentro dela) segurou o lock da carteira e estourou o p99. Mitigação: nada de I/O externo dentro da transação (já exigido pela RNF-DISP-01); `lock_timeout` (pergunta 12).
 - Limite diário (spec 0003) é outra linha disputada com a mesma natureza; se tratado com leitura prévia, repete o primeiro risco. Mitigação: mesma técnica (update condicional no gasto do dia).
@@ -202,7 +221,7 @@ No volume do projeto (~1 compra/s por cantina), A e B têm o mesmo desempenho; A
 UPDATE ledger.accounts
 SET balance = balance + $delta, version = version + 1
 WHERE id = $id
-  AND NOT ($delta < 0 AND debit_blocked)
+  AND NOT ($direction <> normal_balance AND debit_blocked)
   AND (allow_negative OR balance + $delta >= 0)
 RETURNING balance, version;
 -- $delta já calculado pelo lado normal da conta (ADR 0005)
@@ -290,12 +309,18 @@ RETURNING balance, version;
     - Escolha de N e roteamento viram configuração a manter.
   - Limitações: dilui a disputa, não a elimina.
 
-**Ordem dentro da transação.** A versão anterior deste discovery recomendava gravar os lançamentos primeiro e atualizar os saldos por último. Isso não funciona com a ADR 0005: o saldo resultante do lançamento só existe depois do `UPDATE`. Dentro do ledger, a ordem é `UPDATE` do saldo e depois `INSERT` do lançamento. O que define o tempo de lock é a posição do débito na transação do canteen:
+**Ordem dentro da transação.**
 
-- Débito no fim da transação: lock mais curto, mas a compra já gravada como aprovada precisaria ser desfeita (savepoint) quando o saldo for insuficiente.
-- Débito na ordem natural do fluxo de compra (passo 6, antes de gravar compra, auditoria e outbox): o lock dura alguns `INSERT` a mais, da ordem de 1 ms.
-
-Na ocupação estimada, o ganho de mover o débito para o fim é desprezível e custa um savepoint em todo caminho de recusa. Fica a ordem natural.
+- A versão anterior deste discovery recomendava gravar os lançamentos primeiro e atualizar os saldos por último. Isso não funciona com a ADR 0005: o saldo resultante do lançamento só existe depois do `UPDATE`. Dentro do ledger, a ordem é `UPDATE` do saldo e depois `INSERT` do lançamento.
+- A primeira correção também tinha uma falha, apontada na revisão: recomendava "débito na ordem natural, sem savepoint". Com as contas em ordem de ID (UUIDv7), a receita, criada antes da carteira, é atualizada primeiro, e a transação do ledger é inserida antes dos saldos (pergunta 11). Quando a carteira recusa, já há escrita; gravar a recusa na mesma transação faria o commit de um crédito sem débito, e o trigger de partida dobrada derrubaria o commit.
+- Correção: as escritas condicionais (gasto do dia e ledger) rodam dentro de um savepoint. Na recusa, a transação volta ao savepoint e o canteen grava a recusa na mesma transação. O pgx abre savepoint ao iniciar uma transação dentro de outra. Um savepoint por compra não causa problema; o Postgres só degrada com dezenas de subtransações abertas na mesma transação.
+- Alternativas descartadas:
+  - travar todas as linhas com `FOR UPDATE` antes de escrever e fazer os débitos condicionais primeiro: mais comandos e a idempotência (pergunta 11) teria que ir para o fim;
+  - gravar a recusa numa transação nova depois do rollback: a recusa deixa de ser atômica com auditoria e aviso.
+- **Ordem global de travamento**, igual em compra e estorno, para não haver deadlock entre linhas de tipos diferentes:
+  1. linha do gasto do dia do aluno (limite diário, spec 0003);
+  2. contas do ledger, em ordem de ID.
+- O estorno abate o gasto do dia antes do lançamento inverso, na mesma ordem.
 
 **Custo-benefício.**
 
@@ -307,11 +332,11 @@ Na ocupação estimada, o ganho de mover o débito para o fim é desprezível e 
 **Riscos e limitações.** Pre-mortem ("um ano depois, A deu errado"):
 
 - O teste de carga concentrou as 100 compras/s numa cantina e o p99 subiu. Mitigação: o cenário da Fase 6 mede os dois casos (distribuído e concentrado); a estimativa diz que mesmo o concentrado cabe.
-- Uma transação de compra ficou lenta por outro motivo (consulta de regras pesada, I/O externo) e segurou o lock da receita. Mitigação: `lock_timeout` (pergunta 12), nada de I/O externo na transação, e o débito na ordem natural, depois das verificações.
+- Uma transação de compra ficou lenta por outro motivo (consulta de regras pesada, I/O externo) e segurou o lock da receita. Mitigação: `lock_timeout` (pergunta 12), nada de I/O externo na transação, e as escritas condicionais depois das verificações de leitura.
 - A v2 com recebimento pela plataforma e repasse (UC-SIS-04) criaria uma conta de entrada de Pix da plataforma inteira, quente de verdade. Mitigação: reavaliar esta pergunta quando a v2 entrar; recargas são menos frequentes que compras.
 - Um relatório somando os lançamentos da receita em tempo real ficou lento. Mitigação: com A, o relatório lê o saldo materializado.
 
-**Recomendação:** A. Materializar o saldo de todas as contas, de forma síncrona, com o débito na ordem natural do fluxo de compra. No volume do projeto a linha da receita fica ocupada menos de 1% do tempo; qualquer alternativa custa complexidade ou uma exceção na ADR 0005 sem retorno. Medir na Fase 6 com cenário concentrado.
+**Recomendação:** A. Materializar o saldo de todas as contas, de forma síncrona, com a ordem global de travamento e as escritas condicionais num savepoint. No volume do projeto a linha da receita fica ocupada menos de 1% do tempo; qualquer alternativa custa complexidade ou uma exceção na ADR 0005 sem retorno. Medir na Fase 6 com cenário concentrado.
 
 **O que mudaria a recomendação:**
 
@@ -716,7 +741,7 @@ ledger.entries      (id bigint PK, transaction_id FK, account_id FK,
 
 - Dinheiro em inteiro de centavos, nunca ponto flutuante nem `decimal` (simple-ledger acerta; Fluxo-De-Caixa usa `decimal`).
 - `reverses_id UNIQUE`: invariante 6 garantida pelo banco.
-- `debit_blocked`: bloqueio para débito conferido no mesmo `UPDATE` do saldo (pergunta 2).
+- `debit_blocked`: bloqueio conferido no mesmo `UPDATE` do saldo, só para lançamento que diminui o saldo (pergunta 2).
 - Livro da transação igual ao livro das contas: conferido na escrita (Go e trigger).
 - `entries.id` em `bigint`: ordem de inserção interna; a ordem por conta vem da versão.
 
@@ -1021,7 +1046,7 @@ Os valores são pontos de partida, a confirmar no teste da RNF-CARGA-03 e na Fas
 | Saída | O quê |
 |---|---|
 | [ADR 0005](../adr/0005-modelo-contabil-do-ledger.md) (aceita) | modelo contábil: livro, lado normal, direção e valor positivo, centavos, saldo resultante e versão (perguntas 1, 5 e 10) |
-| ADR nova: concorrência no saldo | update condicional em `READ COMMITTED`, bloqueio para débito na condição, ordem por ID, contas quentes materializadas, repetição no executor e limites de espera (perguntas 2, 3 e 12) |
+| [ADR 0006](../adr/0006-concorrencia-no-saldo.md) (aceita) | update condicional em `READ COMMITTED`, bloqueio para débito na condição, ordem por ID, contas quentes materializadas, repetição no executor e limites de espera (perguntas 2, 3 e 12) |
 | ADR "Ledger como módulo isolado no canteen" (prevista) | construir em vez de usar pronto, fronteira de dados, o que foi copiado de cada referência (perguntas 6 e 9) |
 | ADR "Portas e adaptadores com DDD tático leve" (prevista) | unidade de trabalho para transação compartilhada (pergunta 14) |
 | `domain.md` (feito) | livro, lado normal, invariantes; questão em aberto: cantinas de donos diferentes na mesma escola |

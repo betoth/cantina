@@ -31,9 +31,23 @@ Escolhida: **direção e valor positivo no lançamento, lado normal na conta**, 
 ### Estrutura
 
 - **Livro** (`Book`): conjunto fechado de contas. Transação só entre contas do mesmo livro; o ledger recusa o contrário. Um livro por escola no MVP; o ledger guarda só o ID, e quem sabe que o livro é de uma escola é o canteen. Mesmo papel do `ledger` do TigerBeetle e dos *shelves* do Square Books.
-- **Conta**: livro, lado normal, se pode ficar negativa, saldo e versão. Não conhece o dono.
-- **Transação**: o fato (ID gerado por quem chama, livro, código do motivo, transação que ela reverte). Dois ou mais lançamentos, com total de débitos = total de créditos.
-- **Lançamento**: conta, direção, valor, saldo resultante e versão da conta.
+- **Conta**: não conhece o dono. Guarda:
+  - livro;
+  - lado normal;
+  - se pode ficar negativa;
+  - saldo;
+  - versão.
+- **Transação**: o fato, com dois ou mais lançamentos e total de débitos = total de créditos. Guarda:
+  - ID gerado por quem chama;
+  - livro;
+  - código do motivo;
+  - transação que ela reverte.
+- **Lançamento**: guarda:
+  - conta;
+  - direção;
+  - valor;
+  - saldo resultante;
+  - versão da conta.
 - Transação com N lançamentos, não transferência de-para com duas pernas (como no Fluxo-De-Caixa): duas pernas não comportam taxa da plataforma nem pagamento com duas fontes, e o domínio já diz "dois ou mais".
 
 ### Lado normal
@@ -63,7 +77,10 @@ Invariantes:
 
 ### Histórico
 
-- Cada lançamento grava o saldo resultante da conta e a versão da conta (que sobe 1 a cada lançamento), com versão única por conta. O extrato mostra o saldo após cada movimento sem recalcular, o saldo em qualquer momento é uma leitura, e versão pulada ou repetida denuncia erro.
+- Cada lançamento grava o saldo resultante da conta e a versão da conta (que sobe 1 a cada lançamento), com versão única por conta. Com isso:
+  - o extrato mostra o saldo após cada movimento sem recalcular;
+  - o saldo em qualquer momento é uma leitura;
+  - versão pulada ou repetida denuncia erro.
 - Instantes em `timestamptz` (UTC). O ledger não tem noção de dia; dia, fuso e período são do canteen (ex.: limite diário no fuso da escola). A ordem dos lançamentos de uma conta é dada pela versão, não pelo relógio.
 
 ### Valores

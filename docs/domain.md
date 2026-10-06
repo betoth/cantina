@@ -82,10 +82,13 @@ Critério: se pode acontecer segundos depois ou ser retentado sem problema, é c
 - **Contas:**
   - uma por aluno (carteira);
   - por cantina, uma de receita e uma de entrada de Pix.
-- **Não conhece donos:** aluno e cantina guardam o ID da sua conta. O ledger só conhece propriedades contábeis: lado normal, pode ficar negativa, ativa ou bloqueada para débito.
+- **Não conhece donos:** aluno e cantina guardam o ID da sua conta. O ledger só conhece propriedades contábeis:
+  - lado normal;
+  - se pode ficar negativa;
+  - ativa ou bloqueada para débito.
 - **Lado normal:** definido na abertura da conta. Lançamento do mesmo lado aumenta o saldo; do lado oposto, diminui. Toda conta saudável tem saldo positivo; saldo negativo indica erro, salvo em conta marcada como podendo ficar negativa. Modelo: [ADR 0005](adr/0005-modelo-contabil-do-ledger.md).
 - **Abertura de conta** é idempotente e acontece na mesma transação do cadastro do aluno.
-- **Saldo materializado** atualizado com lock ou update condicional; reconciliado com a soma dos lançamentos.
+- **Saldo materializado** atualizado com update condicional ([ADR 0006](adr/0006-concorrencia-no-saldo.md)); reconciliado com a soma dos lançamentos.
 - **Idempotência** por chave única. Uma transação não pode ser estornada duas vezes.
 - **Imutabilidade** garantida também por permissões do banco.
 - Fechamento por operador ou turno é relatório da cantina, não conta no ledger.
@@ -151,14 +154,18 @@ Vale para toda operação que muda saldo: compra, estorno e pedido de recarga.
 
 1. Verifica a chave de idempotência; se já existe, devolve o resultado gravado.
 2. Identifica o aluno (QR ou matrícula) e o operador.
-3. Verifica: aluno ativo, ao menos um responsável com consentimento, carteira sem bloqueio, produtos disponíveis hoje e com categoria.
+3. Verifica:
+   - aluno ativo;
+   - ao menos um responsável com consentimento;
+   - produtos disponíveis hoje e com categoria.
 4. Avalia as regras do responsável (função pura no domínio), com a versão vigente conferida no banco.
-5. Verifica o limite diário.
-6. Verifica o saldo e debita no ledger.
+5. Soma a compra ao gasto do dia, só se couber no limite diário.
+6. Debita no ledger, só se a carteira não estiver bloqueada e tiver saldo.
 7. Grava a compra (chave de idempotência, preço e categoria congelados, versão das regras, operador, cantina, terminal), a auditoria, o evento e o pedido de aviso no outbox.
 
+- **Garantia na escrita:** bloqueio, limite diário e saldo são garantidos na própria escrita dos passos 5 e 6, não numa leitura anterior ([ADR 0006](adr/0006-concorrencia-no-saldo.md)). Consultar antes (ex.: o cardápio filtrado no caixa) é conveniência.
 - **Compra atômica:** aprovada ou recusada inteira, nunca parcial. A recusa informa o motivo e os itens ou o valor que a causaram; o caixa ajusta e envia uma compra nova.
-- **Recusa** (verificação negativa nos passos 3 a 6): grava a tentativa recusada com o motivo, a auditoria e o pedido de aviso. Nada é debitado.
+- **Recusa** (verificação negativa nos passos 3 a 6): grava a tentativa recusada com o motivo, a auditoria e o pedido de aviso. Nada é debitado e o gasto do dia não muda.
 - **Erro técnico** em qualquer passo: desfaz tudo; nada é gravado.
 
 ## Estorno

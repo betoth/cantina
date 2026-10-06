@@ -22,11 +22,12 @@ Detalhar o caso de uso: **$ARGUMENTS**
 4. Arquivo `docs/use-cases/UC-ATOR-NN-nome-em-kebab-case.md`, em português. Criar a pasta se não existir.
 5. Preencher o template seção por seção, mostrando cada uma e esperando confirmação antes da próxima.
 6. Sem detalhe técnico: o quê e o porquê, na visão do ator. Endpoints, tabelas, locks e eventos ficam nas specs.
-7. Regras de negócio: citar a seção do `domain.md`, sem reescrever. Regra nova vai para o `domain.md`.
-8. Requisitos não funcionais: citar pelos IDs.
+7. Na tabela de specs, spec ainda não criada aparece só com número e nome, sem link; o link entra quando a spec for criada.
+8. Regras de negócio: citar a seção do `domain.md`, sem reescrever. Regra nova vai para o `domain.md`.
+9. Requisitos não funcionais: citar pelos IDs.
 
 ## Fechamento
 
-9. Em `docs/use-cases.md`, transformar o ID do caso em link para o arquivo.
-10. Questões que surgirem: de domínio vão para `docs/domain.md`; as do próprio caso ficam na seção do arquivo.
-11. Pedir revisão final.
+10. Em `docs/use-cases.md`, transformar o ID do caso em link para o arquivo.
+11. Questões que surgirem: de domínio vão para `docs/domain.md`; as do próprio caso ficam na seção do arquivo.
+12. Pedir revisão final.
