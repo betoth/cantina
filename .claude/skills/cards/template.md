@@ -4,7 +4,7 @@ Título: `[ID ou Tipo] Texto da entrega`
 - Sem ID, o tipo no lugar: `[ADR] ...`, `[Técnico] ...`, `[Harness] ...`.
 - Sub-issue: o ID da issue mãe. Fora do roadmap: `[Técnico] ...`, `[Bug] ...`.
 
-Metadados: milestone da fase; label de tipo (`caso-de-uso`, `rnf`, `técnico`, `adr`, `harness`, `bug`); label de modo (`manual`, `pareado`, `delegado`).
+Metadados: milestone da fase; label de tipo (`caso-de-uso`, `rnf`, `técnico`, `adr`, `harness`, `bug`); label de modo (`manual`, `pareado`, `delegado`); `não-planejado` quando o item entrou com a fase já em andamento.
 
 Corpo:
 
@@ -19,6 +19,14 @@ Por que esta entrega existe e onde se encaixa na fase. Uma a três frases.
 - Casos de uso / RNF: UC-ATOR-NN, RNF-GRUPO-NN
 - Spec: `docs/specs/NNNN-nome.md` (quando existir)
 - ADRs: (quando houver)
+
+## Escopo
+
+Só em issue sem spec (harness, técnico). Com spec, ela está nas Referências.
+
+- Entra: ...
+- Não entra: ...
+- Critérios: ...
 
 ## Passos
 

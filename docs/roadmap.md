@@ -7,7 +7,7 @@ Casos de uso: [use-cases.md](use-cases.md). Requisitos não funcionais: [non-fun
 | Fase | Tema | Situação |
 |---|---|---|
 | 0 | Harness | concluída |
-| 1 | Ledger, compra e estorno | planejada |
+| 1 | Ledger, compra e estorno | em andamento |
 | 2 | Recarga: Pix fake, webhook, outbox, Kafka | planejada |
 | 3 | Regras, bloqueios e avisos | planejada |
 | 4 | Identidade e acesso | planejada |
@@ -127,7 +127,8 @@ ADRs:
 Harness de IA:
 
 - [ ] Skill `/tests-from-spec`
-- [ ] Agent `reviewer`
+- [ ] Skill `/refine` *(não planejado)* ([#3](https://github.com/betoth/cantina/issues/3))
+- [ ] Agent `reviewer` ([#2](https://github.com/betoth/cantina/issues/2))
 - [ ] Agent `test-designer`
 - [ ] `.claude/settings.json`
 
