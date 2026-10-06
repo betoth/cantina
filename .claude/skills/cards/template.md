@@ -34,7 +34,8 @@ Só em issue sem spec (harness, técnico). Com spec, ela está nas Referências.
 - [ ] Testes
 - [ ] Implementação
 - [ ] `make check` verde
-- [ ] Diário
+- [ ] Diário e roadmap
+- [ ] Revisão (agent `reviewer`)
 
 ## Testes
 
@@ -44,6 +45,7 @@ Só em issue sem spec (harness, técnico). Com spec, ela está nas Referências.
 ## Pronto quando
 
 - Todos os testes acima marcados, antes do merge.
+- Revisão sem bloqueante pendente.
 - Atende o critério de pronto N da fase.
 
 ## Fora de escopo

@@ -2,11 +2,13 @@
 
 Meu registro da evolução do projeto: o que fiz, o que decidi (e por que mudei de ideia) e o que aprendi ou revisei. Decisões significativas têm ADR própria em [docs/adr](adr/); aqui fica o caminho até elas.
 
-## 2026-10-05 · Fase 0: harness, escopo e roadmap
+## 2026-10-05 · Fases 0 e 1: harness, escopo, roadmap e reviewer
 
 ### Feito
 
 Dia de fundação, sem código de domínio. Escrevi o domínio, os casos de uso, os requisitos não funcionais, o roadmap das Fases 0 a 7 e as quatro primeiras ADRs. Montei o harness de IA (`CLAUDE.md`, convenções e as skills que conduzem cada documento) e o [quadro no GitHub Projects](https://github.com/users/betoth/projects/1), que vai acompanhar a execução das fases.
+
+Fechei a Fase 0 e abri a Fase 1 pelo harness: a skill `/refine` ([#3](https://github.com/betoth/cantina/issues/3), [PR #4](https://github.com/betoth/cantina/pull/4)), que prepara cada item antes de virar issue, e o agent revisor ([#2](https://github.com/betoth/cantina/issues/2)), testado numa branch descartável com problemas plantados.
 
 ### Decisões
 
@@ -25,6 +27,9 @@ Dia de fundação, sem código de domínio. Escrevi o domínio, os casos de uso,
 - Faltava o nível entre o caso de uso e o código: no roadmap não existe "criar ledger", mas a compra precisa dele. A cadeia ficou entrega → caso de uso → specs → tarefas. O caso de uso lista as specs (o ledger é uma delas), e cada spec termina com as tarefas de implementação, que viram issues.
 - Pensei em GitFlow com branches de DEV e HML, para estudo. Fiquei com GitHub Flow: branch por ambiente diverge com o tempo, e aqui ainda não existe ambiente. Quando houver, a promoção entre ambientes vai ser pelo pipeline, com a mesma imagem.
 - Criei a primeira issue da Fase 1 (o agent reviewer) e percebi que ela nasceu sem escopo: "definir escopo" era o primeiro passo da execução. Pensei numa coluna Backlog para issues não refinadas, mas criar o card para depois editá-lo é retrabalho. Fiquei com refinar antes de criar: o roadmap é o backlog, e a skill `/refine` conduz o refinamento até a issue nascer pronta. Ela entrou na fase como não planejada, e marquei isso no roadmap e com uma label.
+- O revisor não repete regra nenhuma: para cada artefato, lê a skill ou o documento que define as regras dele, e só traz de próprio a postura de revisor. Roda antes de todo PR; bloqueante tem que ser resolvido ou descartado com motivo, e sugestão pendente pede minha confirmação. No teste, achou os problemas plantados e ainda mostrou uma falha no fluxo, que punha o diário depois do PR; o diário passou para antes da revisão.
+- Ajustei o fluxo por tarefa ao longo das revisões: o checkpoint vem antes do diário, para os pontos dele entrarem na mesma entrada; a marcação do roadmap deixou de ser depois do merge, porque sobrava para o PR seguinte, e passou para antes da revisão; o PR ganhou a seção `## Review`; e limitei a revisão a três rodadas com bloqueante antes de eu decidir, para não virar laço.
+- Quis exigir aprovação de review no GitHub, mas o autor não pode aprovar o próprio PR; num projeto solo isso travaria todo merge. A revisão fica garantida pelo fluxo e registrada no PR.
 - Por enquanto, toda alteração no GitHub feita pelo Claude passa por mim antes. Afrouxo quando ganhar confiança no fluxo.
 - Só CI por enquanto. CD e ambientes de DEV e HML ficam para depois.
 

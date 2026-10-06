@@ -20,7 +20,7 @@ Cards do roadmap: **$ARGUMENTS**
 | Issue | uma por checkbox de entrega da fase ou tarefa de spec, criada só depois de refinada (skill `/refine`), no formato de [template.md](template.md), em português |
 | Quadro | Project `Cantina` (https://github.com/users/betoth/projects/1), público, ligado ao repositório, campo Status com A fazer, Em andamento, Em revisão, Feito |
 | Automações do quadro | item adicionado → A fazer; PR ligado à issue → Em revisão; item fechado ou PR mergeado → Feito; item reaberto → Em andamento |
-| PR | corpo com `Closes #N`; o merge fecha a issue |
+| PR | formato pela seção Git de `docs/conventions.md`; o merge fecha a issue |
 
 ## Preparação
 
@@ -48,13 +48,15 @@ Chamado pela skill `/refine`, com o corpo da issue já aprovado pelo usuário.
 
 - Início de uma entrega: só issue Ready (critérios da skill `/refine`); se faltar algo, refinar antes. Card para Em andamento; branch pela seção Git de `docs/conventions.md`.
 - Passo da issue concluído: marcar o checkbox no corpo da issue.
-- PR aberto (formato pela seção Git de `docs/conventions.md`), corpo com `Closes #N`; conferir que a automação moveu o card para Em revisão.
+- Antes da revisão: marcar no roadmap o checkbox da entrega que a branch conclui (regras da skill `/roadmap`). Entrega com várias issues (caso de uso com tarefas): marcar na branch cuja sub-issue for a única ainda aberta da entrega.
+- Antes do PR: revisão pelo agent `reviewer` (fluxo por tarefa do `CLAUDE.md`).
+- PR aberto (formato pela seção Git de `docs/conventions.md`); conferir que a automação moveu o card para Em revisão.
 - Testes do card, antes do merge, na branch:
   - Automático: marcar quando passar no `make check` (ou no CI, quando existir).
   - Manual: o usuário executa o roteiro e informa o resultado; marcar o item e comentar na issue data, roteiro e resultado.
   - Falhou: comentar o que falhou na issue; card de volta para Em andamento.
   - Item de teste sem marcar: não seguir para o merge.
-- PR mergeado: confirmar que a issue fechou e o card está em Feito; marcar o checkbox no roadmap (regras da skill `/roadmap`).
+- PR mergeado: confirmar que a issue fechou e o card está em Feito. Entrega com todas as sub-issues fechadas e checkbox ainda desmarcado no roadmap: marcar na próxima branch e avisar o usuário.
 - Entrega com issue que mudou de texto no roadmap: renomear a issue. Entrega removida: propor fechar a issue como não planejada.
 
 ## Issue fora do roadmap
