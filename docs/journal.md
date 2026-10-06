@@ -24,6 +24,7 @@ Dia de fundação, sem código de domínio. Escrevi o domínio, os casos de uso,
 - Git: Conventional Commits, branch por issue e squash no merge, tudo em inglês. Pensei numa skill para isso, mas é convenção para qualquer pessoa, então foi para `conventions.md`; skill só se abrir PR virar receita repetitiva.
 - Faltava o nível entre o caso de uso e o código: no roadmap não existe "criar ledger", mas a compra precisa dele. A cadeia ficou entrega → caso de uso → specs → tarefas. O caso de uso lista as specs (o ledger é uma delas), e cada spec termina com as tarefas de implementação, que viram issues.
 - Pensei em GitFlow com branches de DEV e HML, para estudo. Fiquei com GitHub Flow: branch por ambiente diverge com o tempo, e aqui ainda não existe ambiente. Quando houver, a promoção entre ambientes vai ser pelo pipeline, com a mesma imagem.
+- Criei a primeira issue da Fase 1 (o agent reviewer) e percebi que ela nasceu sem escopo: "definir escopo" era o primeiro passo da execução. Pensei numa coluna Backlog para issues não refinadas, mas criar o card para depois editá-lo é retrabalho. Fiquei com refinar antes de criar: o roadmap é o backlog, e a skill `/refine` conduz o refinamento até a issue nascer pronta. Ela entrou na fase como não planejada, e marquei isso no roadmap e com uma label.
 - Por enquanto, toda alteração no GitHub feita pelo Claude passa por mim antes. Afrouxo quando ganhar confiança no fluxo.
 - Só CI por enquanto. CD e ambientes de DEV e HML ficam para depois.
 
