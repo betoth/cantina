@@ -68,7 +68,7 @@ Testei usando a skill para adaptar o discovery do ledger ao template e aprofunda
   - pre-mortem;
   - o que mudaria a recomendação.
 - O revisor apontou que o template não batia com o discovery do ledger. Entre aceitar os dois formatos e adaptar o ledger, adaptei o ledger.
-- Enumeração vai em lista, com subitens, nunca encadeada numa frase. Virou convenção para todo documento; o que já existe é ajustado quando for alterado.
+- Enumeração vai em lista, com subitens, nunca encadeada numa frase. Virou convenção para todo documento; no que já existe, o trecho alterado é ajustado.
 - A marca de não planejado no roadmap valia só para item que entrava numa fase em andamento. Mudei para todo item novo depois que o roadmap foi validado, em qualquer fase, para separar o plano original do que surgiu na execução.
 
 ### Aprendizados e revisões

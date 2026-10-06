@@ -6,7 +6,17 @@
   - AAAA-MM-DD: aprofundamento (o que e por quê).
 - Referências pesquisadas: produtos, projetos e artigos. Lista completa em [Fontes](#fontes).
 
-Cada pergunta traz como o mercado resolve, as opções comparadas e a recomendação para o projeto. Recomendação não é decisão: as decisões saem nas ADRs, no `domain.md` e nas specs (ver [Saídas](#saídas)).
+Cada pergunta traz:
+
+- como o mercado resolve;
+- as opções comparadas;
+- a recomendação para o projeto.
+
+Recomendação não é decisão. As decisões saem (ver [Saídas](#saídas)):
+
+- nas ADRs;
+- no `domain.md`;
+- nas specs.
 
 ## Resumo das recomendações
 
@@ -21,7 +31,10 @@ Cada pergunta traz como o mercado resolve, as opções comparadas e a recomenda�
 **Eliminatórios e critérios.**
 
 - Eliminatórios: o que qualquer opção precisa cumprir (invariantes, requisitos não funcionais, ADRs aceitas).
-- Critérios: técnicos, do domínio e de mercado.
+- Critérios:
+  - técnicos;
+  - do domínio;
+  - de mercado.
 
 **Mercado.** Como as referências resolvem, com fonte. Fato medido separado de opinião.
 
@@ -37,7 +50,11 @@ Cada pergunta traz como o mercado resolve, as opções comparadas e a recomenda�
   - Limitações: o que ela não resolve, em que escala deixa de servir.
 - Opção B: mesma estrutura.
 
-**Custo-benefício.** Construir, operar e reverter cada opção, contra o benefício na escala real do projeto.
+**Custo-benefício.** Custo de cada opção contra o benefício na escala real do projeto:
+
+- construir;
+- operar;
+- reverter.
 
 **Riscos e limitações.** Pre-mortem da opção recomendada e o que ela não resolve.
 

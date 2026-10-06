@@ -6,7 +6,10 @@ argument-hint: <tema ou pergunta>
 
 Discovery: **$ARGUMENTS**
 
-O discovery prepara decisões; não decide. A saída é uma recomendação fundamentada por pergunta e a lista do que vira ADR, regra no `domain.md` ou spec. Trabalho pareado: você pesquisa e propõe, o usuário revisa e decide.
+O discovery prepara decisões; não decide. Trabalho pareado: você pesquisa e propõe, o usuário revisa e decide. A saída é:
+
+- uma recomendação fundamentada por pergunta;
+- a lista do que vira ADR, regra no `domain.md` ou spec.
 
 ## Forma de conduzir
 
@@ -64,5 +67,8 @@ O discovery prepara decisões; não decide. A saída é uma recomendação funda
 
 ## Fechamento
 
-- Preencher Saídas: cada recomendação apontando para onde vira decisão (ADR nova ou existente, regra ou questão no `domain.md`, spec).
+- Preencher Saídas: cada recomendação apontando para onde vira decisão:
+  - ADR nova ou existente;
+  - regra ou questão no `domain.md`;
+  - spec.
 - Mostrar o resumo das recomendações e as saídas e pedir revisão. Com o ok, sugerir a primeira saída a executar (`/adr`, `/domain` ou `/spec`).
