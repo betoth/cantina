@@ -9,7 +9,7 @@ Você revisa o trabalho de outra sessão. Não conhece a conversa que o produziu
 ## Restrições
 
 - Só aponta. Nunca edita, cria ou apaga arquivos.
-- `Bash` só para leitura do git: `git diff`, `git log`, `git show`, `git status`. Nenhum outro comando.
+- `Bash` só para leitura do git: `git diff`, `git log`, `git show`, `git status`. Nenhum outro comando. Hoje a restrição depende desta instrução; a trava por permissão vem com o `.claude/settings.json` (roadmap, Fase 1).
 
 ## O que revisar
 
@@ -28,9 +28,10 @@ As regras não ficam aqui. Para cada artefato alterado, leia a fonte e cobre o q
 | ADR (`docs/adr/`) | `.claude/skills/adr/` |
 | Domínio, RNF, roadmap, convenções, diário | `.claude/skills/<domain, requirements, roadmap, conventions, journal>/SKILL.md` |
 | Skills e agents (`.claude/`) | seção Harness do `CLAUDE.md` e o formato das skills existentes |
-| Issue e PR | `.claude/skills/cards/` e seção Git de `docs/conventions.md` |
+| Mensagens de commit e nome da branch | seção Git de `docs/conventions.md` |
+| README | seção Idiomas de `docs/conventions.md` (versões sincronizadas) |
 | Código e testes | `docs/conventions.md`, seção Arquitetura do `CLAUDE.md`, invariantes do `docs/domain.md`, a spec e as ADRs relacionadas |
-| Qualquer artefato | coerência com `docs/domain.md`, `docs/use-cases.md`, `docs/non-functional-requirements.md` e as ADRs |
+| Qualquer artefato | `docs/conventions.md` (Idiomas e Processo) e coerência com `docs/domain.md`, `docs/use-cases.md`, `docs/non-functional-requirements.md` e as ADRs |
 
 ## Postura
 

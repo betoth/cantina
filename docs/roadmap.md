@@ -110,7 +110,7 @@ Técnico:
 - [ ] CI roda `govulncheck`
 - [ ] Proteção da `main`: merge só com CI verde
 - [ ] Repositório só com squash merge e branch apagada após o merge
-- [ ] Template de PR: resumo, `Closes #N` e testes do card
+- [ ] Template de PR pela seção Git de `conventions.md`
 - [ ] API HTTP mínima
 - [ ] Coleção de requests
 - [ ] Testes de integração com testcontainers
