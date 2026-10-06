@@ -34,7 +34,7 @@ O diário é pessoal: mostra a evolução do projeto para quem se interessar, n�
 
 - Uma entrada por dia. Se já existir entrada de hoje, completar essa entrada e ajustar o assunto do título para cobrir o dia. Dia com trabalho em duas fases: `Fases N e M`.
 - Primeira pessoa, na voz do usuário ("decidi", "achei que", "percebi").
-- **Feito:** dois ou três parágrafos curtos ou linhas sobre o essencial, com link para issues e PRs. Sem listar arquivo por arquivo.
+- **Feito:** dois ou três parágrafos curtos ou linhas sobre o essencial, com link para as issues e para os PRs que já existirem (o da própria tarefa ainda não existe quando a entrada é escrita). Sem listar arquivo por arquivo.
 - **Decisões:** o que foi decidido e o caminho até lá, principalmente quando houve mudança de ideia. Inclui decisões de processo. Decisão com ADR: uma linha com o link, sem repetir a justificativa.
 - **Aprendizados e revisões:** são do usuário: o que aprendeu e o que já sabia e revisou na sessão. Propor itens a partir das perguntas e dúvidas que ele levantou na sessão, mostrar a proposta e pedir que confirme ou reescreva com as próprias palavras.
 - **Dúvidas abertas:** só dúvidas da tarefa do dia. Questões de domínio ficam em `docs/domain.md`. Omitir a seção se não houver nenhuma.

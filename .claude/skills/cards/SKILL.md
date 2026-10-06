@@ -48,7 +48,7 @@ Chamado pela skill `/refine`, com o corpo da issue já aprovado pelo usuário.
 
 - Início de uma entrega: só issue Ready (critérios da skill `/refine`); se faltar algo, refinar antes. Card para Em andamento; branch pela seção Git de `docs/conventions.md`.
 - Passo da issue concluído: marcar o checkbox no corpo da issue.
-- Antes da revisão: marcar no roadmap o checkbox da entrega que a branch conclui (regras da skill `/roadmap`). Entrega com várias issues (caso de uso com tarefas): marcar na branch da última sub-issue a ser mergeada.
+- Antes da revisão: marcar no roadmap o checkbox da entrega que a branch conclui (regras da skill `/roadmap`). Entrega com várias issues (caso de uso com tarefas): marcar na branch cuja sub-issue for a única ainda aberta da entrega.
 - Antes do PR: revisão pelo agent `reviewer` (fluxo por tarefa do `CLAUDE.md`).
 - PR aberto (formato pela seção Git de `docs/conventions.md`); conferir que a automação moveu o card para Em revisão.
 - Testes do card, antes do merge, na branch:
@@ -56,7 +56,7 @@ Chamado pela skill `/refine`, com o corpo da issue já aprovado pelo usuário.
   - Manual: o usuário executa o roteiro e informa o resultado; marcar o item e comentar na issue data, roteiro e resultado.
   - Falhou: comentar o que falhou na issue; card de volta para Em andamento.
   - Item de teste sem marcar: não seguir para o merge.
-- PR mergeado: confirmar que a issue fechou e o card está em Feito.
+- PR mergeado: confirmar que a issue fechou e o card está em Feito. Entrega com todas as sub-issues fechadas e checkbox ainda desmarcado no roadmap: marcar na próxima branch e avisar o usuário.
 - Entrega com issue que mudou de texto no roadmap: renomear a issue. Entrega removida: propor fechar a issue como não planejada.
 
 ## Issue fora do roadmap
