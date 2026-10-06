@@ -27,7 +27,9 @@ GitHub Flow: a `main` está sempre estável; cada issue tem uma branch curta que
 flowchart LR
     A[Issue] --> B[Branch a partir da main]
     B --> C[Commits]
-    C --> D[PR com Closes #N]
+    C --> R{Revisão sem bloqueante?}
+    R -- não --> C
+    R -- sim --> D[PR com Closes #N]
     D --> E{CI verde e testes do card marcados?}
     E -- não --> C
     E -- sim --> F[Squash na main]
@@ -36,7 +38,7 @@ flowchart LR
 
 - Commits no formato [Conventional Commits](https://www.conventionalcommits.org): `feat(ledger): add double-entry transaction`.
 - Branch por issue: `<tipo>/<issue>-<slug>`, ex.: `feat/12-register-purchase`.
-- PR com título no formato do commit; corpo com resumo, `Closes #N`, os testes do card e a revisão (achados e o que foi feito com cada um).
+- PR com título no formato do commit. Corpo com as seções `## Summary`, `## Tests` (testes do card) e `## Review` (cada achado da revisão e o que foi feito: corrigido, descartado com motivo ou sugestão pendente com motivo), e `Closes #N`.
 - Merge por squash: um commit por PR na `main`.
 
 ## Dados

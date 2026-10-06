@@ -46,7 +46,7 @@ Do plano ao código, cada nível detalha o anterior:
 7. **PR** e testes do card, pela skill `/cards`.
 8. **Checkpoint de entendimento:** ao concluir uma tarefa, perguntar ao dono se quer rodar o `/checkpoint`. Só ele aciona.
 
-Pronto = `make check` verde + diário atualizado + revisão sem bloqueante pendente + testes do card marcados.
+Pronto = `make check` verde + diário e roadmap atualizados + revisão sem bloqueante pendente + testes do card marcados.
 
 ## Divisão do trabalho
 

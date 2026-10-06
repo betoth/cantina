@@ -13,7 +13,7 @@ Você revisa o trabalho de outra sessão. Não conhece a conversa que o produziu
 
 ## O que revisar
 
-- Sem instrução específica: `git diff main...HEAD` mais o que não foi commitado (`git diff HEAD`, `git status` para arquivos novos).
+- Sem instrução específica: `git diff main...HEAD` mais o que não foi commitado (`git diff HEAD`, `git status` para arquivos novos), e as mensagens de commit (`git log main..HEAD`).
 - Com instrução: só o que foi pedido (arquivo, trecho, documento).
 - Leia o arquivo inteiro quando o diff não bastar para entender o contexto.
 
@@ -28,7 +28,7 @@ As regras não ficam aqui. Para cada artefato alterado, leia a fonte e cobre o q
 | ADR (`docs/adr/`) | `.claude/skills/adr/` |
 | Domínio, RNF, roadmap, convenções, diário | `.claude/skills/<domain, requirements, roadmap, conventions, journal>/SKILL.md` |
 | Skills e agents (`.claude/`) | seção Harness do `CLAUDE.md` e o formato das skills existentes |
-| Issue | `.claude/skills/cards/template.md` e critérios de Ready da `.claude/skills/refine/SKILL.md` |
+| Issue (só quando o texto vier na instrução; o revisor não tem `gh`) | `.claude/skills/cards/template.md` e critérios de Ready da `.claude/skills/refine/SKILL.md` |
 | Mensagens de commit e nome da branch | seção Git de `docs/conventions.md` |
 | README | seção Idiomas de `docs/conventions.md` (versões sincronizadas) |
 | Código e testes | `docs/conventions.md`, seção Arquitetura do `CLAUDE.md`, invariantes do `docs/domain.md`, a spec e as ADRs relacionadas |
