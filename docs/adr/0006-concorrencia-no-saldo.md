@@ -95,11 +95,20 @@ RETURNING balance, version;
 
 ### Ordem e recusa dentro da transação
 
-- Ordem global de travamento, igual em compra e estorno, para não haver deadlock entre linhas de tipos diferentes:
-  1. linha do gasto do dia do aluno (limite diário);
-  2. contas do ledger, em ordem de ID.
-- O estorno abate o gasto do dia antes do lançamento inverso, na mesma ordem.
-- As escritas condicionais (gasto do dia e ledger) rodam dentro de um savepoint. Com as contas em ordem de ID, a receita pode ser creditada antes de a carteira recusar; na recusa, a transação volta ao savepoint e o canteen grava a tentativa recusada, a auditoria e o aviso na mesma transação.
+- Ordem global de travamento, para não haver deadlock entre linhas de tipos diferentes:
+  - compra:
+    1. reserva da chave de idempotência por escrita (`INSERT ... ON CONFLICT`); retentativa simultânea espera a primeira e devolve o mesmo resultado;
+    2. linha do gasto do dia do aluno (limite diário);
+    3. contas do ledger, em ordem de ID.
+  - estorno:
+    1. reserva da chave de idempotência, como na compra;
+    2. a compra passa de aprovada para estornada por update condicional; estorno simultâneo da mesma compra recebe "já estornada" como resultado, sem erro técnico;
+    3. linha do gasto do dia em que a compra foi feita;
+    4. contas do ledger, em ordem de ID.
+  - Nenhuma compra trava uma compra existente, então o passo 2 do estorno não cria ciclo. O detalhe fica nas specs 0004 (idempotência) e do estorno.
+- As escritas condicionais (gasto do dia e ledger) rodam dentro de um savepoint, porque com as contas em ordem de ID a receita pode ser creditada antes de a carteira recusar. Na recusa, a transação volta ao savepoint e o canteen grava a tentativa recusada, a auditoria e o aviso na mesma transação. Escolhido sobre as alternativas porque:
+  - travar tudo antes de escrever exigiria mais comandos e levaria a idempotência do ledger para o fim;
+  - gravar a recusa numa transação nova tiraria a atomicidade entre recusa, auditoria e aviso.
 - O pgx abre savepoint ao iniciar uma transação dentro de outra. Um savepoint por compra não causa problema; o Postgres só degrada com dezenas de subtransações abertas na mesma transação.
 
 ### Contas quentes
@@ -113,7 +122,9 @@ RETURNING balance, version;
 
 ### Repetição e limites de espera
 
-- O executor de transação repete a transação inteira só em `40001` (serialização) e `40P01` (deadlock): até 3 tentativas, backoff curto com *full jitter*. A transação só toca o banco; eventos saem pelo outbox.
+- O executor de transação repete a transação inteira só em `40001` (serialização) e `40P01` (deadlock): até 3 tentativas, backoff curto com *full jitter*. A transação só toca o banco; eventos saem pelo outbox. Escolhido sobre as alternativas porque:
+  - sem repetição no servidor, um deadlock raro chegaria ao caixa como erro, contra a RNF-CARGA-03;
+  - repetir também espera de lock aumentaria a fila justamente na conta disputada e triplicaria o pior caso de latência.
 - Espera de lock acima do limite (`55P03`), timeout de comando e falha de conexão viram 503 com `Retry-After`; o caixa repete com a mesma chave de idempotência, também com *full jitter*.
 - Nunca são repetidos:
   - recusa por saldo, limite, regra ou bloqueio;
@@ -130,6 +141,8 @@ RETURNING balance, version;
 - Teste com 20 goroutines e barreira de largada debitando a mesma carteira: saldo nunca negativo, aprovadas = ⌊saldo inicial / valor⌋, nenhum erro técnico.
 - Teste com compra e estorno simultâneos do mesmo aluno, passando pelo gasto do dia e pelo ledger, para deadlock.
 - Teste de recusa por saldo em que a receita é atualizada antes da carteira: a recusa é gravada, sem erro técnico e sem lançamento.
+- Teste de duas retentativas simultâneas da mesma compra: uma processa, a outra devolve o mesmo resultado.
+- Teste de dois estornos simultâneos da mesma compra: um estorna, o outro recebe "já estornada"; o gasto do dia é abatido uma vez.
 - Verificação de invariantes ao fim de todo teste de integração.
 
 ## Consequências

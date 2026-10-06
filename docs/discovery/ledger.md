@@ -204,7 +204,7 @@ No volume do projeto (~1 compra/s por cantina), A e B têm o mesmo desempenho; A
 
 - Alguém acrescentou uma checagem prévia em Go (`SELECT` do saldo, depois `UPDATE` sem condição) e reabriu a janela de *lost update*. Mitigação: o teste da RNF-CARGA-03 roda em todo `make check`; a condição de saldo fica só no `WHERE`.
 - O bloqueio para débito foi checado fora do `UPDATE` e uma compra passou durante o bloqueio. Mitigação: o bloqueio na mesma condição do saldo, só para lançamento que diminui o saldo (direção oposta ao lado normal), para os créditos continuarem entrando.
-- Deadlock entre estorno (receita → carteira) e compra (carteira → receita) simultâneos. Mitigação: contas sempre atualizadas em ordem de ID; teste com movimentos nos dois sentidos.
+- Deadlock entre estorno (receita → carteira) e compra (carteira → receita) simultâneos. Mitigação: ordem global de travamento (pergunta 3), com as contas em ordem de ID; teste de compra e estorno simultâneos passando pelo gasto do dia e pelo ledger.
 - Transação longa (chamada externa dentro dela) segurou o lock da carteira e estourou o p99. Mitigação: nada de I/O externo dentro da transação (já exigido pela RNF-DISP-01); `lock_timeout` (pergunta 12).
 - Limite diário (spec 0003) é outra linha disputada com a mesma natureza; se tratado com leitura prévia, repete o primeiro risco. Mitigação: mesma técnica (update condicional no gasto do dia).
 
@@ -317,10 +317,17 @@ RETURNING balance, version;
 - Alternativas descartadas:
   - travar todas as linhas com `FOR UPDATE` antes de escrever e fazer os débitos condicionais primeiro: mais comandos e a idempotência (pergunta 11) teria que ir para o fim;
   - gravar a recusa numa transação nova depois do rollback: a recusa deixa de ser atômica com auditoria e aviso.
-- **Ordem global de travamento**, igual em compra e estorno, para não haver deadlock entre linhas de tipos diferentes:
-  1. linha do gasto do dia do aluno (limite diário, spec 0003);
-  2. contas do ledger, em ordem de ID.
-- O estorno abate o gasto do dia antes do lançamento inverso, na mesma ordem.
+- **Ordem global de travamento**, para não haver deadlock entre linhas de tipos diferentes:
+  - compra:
+    1. reserva da chave de idempotência por escrita;
+    2. gasto do dia;
+    3. contas do ledger em ordem de ID.
+  - estorno:
+    1. reserva da chave;
+    2. compra de aprovada para estornada por update condicional;
+    3. gasto do dia em que a compra foi feita;
+    4. contas do ledger em ordem de ID.
+- A reserva da chave por escrita evita que duas retentativas simultâneas passem juntas por uma checagem de leitura; a mudança condicional de status evita que dois estornos simultâneos abatam o gasto do dia duas vezes. Nenhuma compra trava uma compra existente, então não há ciclo.
 
 **Custo-benefício.**
 
@@ -783,6 +790,7 @@ ledger.entries      (id bigint PK, transaction_id FK, account_id FK,
   - Prós: nada de `ON CONFLICT`.
   - Contras: o erro aborta a transação inteira de quem chama no Postgres; a recuperação exige savepoint.
   - Limitações: incompatível com rodar dentro da transação da compra sem savepoint.
+  - Revisão: com o savepoint da pergunta 3, B deixa de ser incompatível. A continua melhor: um `23505` dentro do savepoint desfaria também o gasto do dia e exigiria reler e refazer, enquanto A resolve a repetição sem erro.
 - C. Ler antes e inserir se não existir:
   - Prós: código direto.
   - Contras: janela entre ler e inserir; com chamadas simultâneas, uma delas cai em `23505` (volta a B).
@@ -878,7 +886,7 @@ Sem hash do pedido: o ledger já guarda todos os campos. Hash e resposta guardad
 **Riscos e limitações.** Pre-mortem ("um ano depois, B deu errado"):
 
 - Alguém pôs um efeito fora do banco dentro da transação (publicar direto no Kafka, chamar o PSP) e a repetição duplicou. Mitigação: eventos só pelo outbox (ADR 0004); nada de I/O externo na transação (RNF-DISP-01).
-- Um deadlock persistente (bug de ordem de contas) ficou escondido pelas repetições. Mitigação: métrica e log de cada repetição com o código do erro (RNF-OBS-02); o teste com movimentos nos dois sentidos (pergunta 2).
+- Um deadlock persistente (bug de ordem de contas) ficou escondido pelas repetições. Mitigação: métrica e log de cada repetição com o código do erro (RNF-OBS-02); ordem global de travamento (pergunta 3) e teste de compra e estorno simultâneos.
 - O `lock_timeout` ficou baixo e o teste da RNF-CARGA-03 passou a dar 503. Mitigação: o valor sai da fila máxima medida, com folga, e o teste roda em todo `make check`.
 - Os limites foram configurados no servidor inteiro e as migrations (goose), que precisam de locks longos, começaram a falhar. Mitigação: limites na role da aplicação ou por transação (`SET LOCAL`), nunca no `postgresql.conf`.
 
@@ -890,7 +898,10 @@ Sem hash do pedido: o ledger já guarda todos os campos. Hash e resposta guardad
   - `lock_timeout` bem acima da fila máxima da RNF-CARGA-03 (ponto de partida: 500 ms);
   - `statement_timeout` acima do `lock_timeout` (ponto de partida: 2 s);
   - `idle_in_transaction_session_timeout` para não deixar transação parada segurando lock (ponto de partida: 5 s).
-- Recusa por saldo, limite ou regra, livro diferente e conflito de idempotência são resultado; nunca são repetidos.
+- Nunca são repetidos, porque são resultado:
+  - recusa por saldo, limite, regra ou bloqueio;
+  - livro diferente;
+  - conflito de idempotência.
 
 Os valores são pontos de partida, a confirmar no teste da RNF-CARGA-03 e na Fase 6.
 
@@ -988,7 +999,7 @@ Os valores são pontos de partida, a confirmar no teste da RNF-CARGA-03 e na Fas
 
 **Riscos e limitações.** Pre-mortem ("um ano depois, A deu errado"): um caso de uso chamou um repositório fora do `uow`. Mitigação: casos de uso recebem só o executor, nunca repositórios soltos; teste de atomicidade (erro no fim desfaz tudo).
 
-**Recomendação:** A. Vai para a ADR "Portas e adaptadores com DDD tático leve", prevista na Fase 1.
+**Recomendação:** A. Vai para a ADR "Portas e adaptadores com DDD tático leve", prevista na Fase 1. A unidade de trabalho precisa permitir savepoint aninhado dentro da transação compartilhada (pergunta 3, ADR 0006).
 
 **O que mudaria a recomendação:** nenhum caso de uso com mais de uma porta na mesma transação (B ou C ficariam suficientes), o que não é o caso da compra.
 
@@ -1035,7 +1046,10 @@ Os valores são pontos de partida, a confirmar no teste da RNF-CARGA-03 e na Fas
 
 - Domínio puro (unitário, por tabela): transação balanceada, valores, mesmo livro, reversão.
 - Integração (testcontainers): cada critério de aceite contra o Postgres real, incluindo as permissões (`UPDATE` em lançamento falha com a role da aplicação).
-- Concorrência: N goroutines com barreira de largada debitando a mesma carteira; ao fim, saldo nunca negativo, aprovadas = ⌊saldo inicial / valor⌋, nenhum erro técnico (RNF-CARGA-03); movimentos nos dois sentidos para deadlock (pergunta 2).
+- Concorrência:
+  - N goroutines com barreira de largada debitando a mesma carteira; ao fim, saldo nunca negativo, aprovadas = ⌊saldo inicial / valor⌋, nenhum erro técnico (RNF-CARGA-03);
+  - compra e estorno simultâneos do mesmo aluno, passando pelo gasto do dia e pelo ledger, sem deadlock (pergunta 3);
+  - recusa por saldo em que a receita é atualizada antes da carteira: recusa gravada, sem erro técnico e sem lançamento (savepoint, pergunta 3).
 - Invariantes: função de verificação (invariantes 1 a 4 e versões sem buraco) ao fim de todo teste de integração; mesma consulta da reconciliação da Fase 2.
 - Propriedade (`pgregory.net/rapid`): no domínio puro desde a primeira entrega; no banco, opcional.
 
@@ -1046,9 +1060,9 @@ Os valores são pontos de partida, a confirmar no teste da RNF-CARGA-03 e na Fas
 | Saída | O quê |
 |---|---|
 | [ADR 0005](../adr/0005-modelo-contabil-do-ledger.md) (aceita) | modelo contábil: livro, lado normal, direção e valor positivo, centavos, saldo resultante e versão (perguntas 1, 5 e 10) |
-| [ADR 0006](../adr/0006-concorrencia-no-saldo.md) (aceita) | update condicional em `READ COMMITTED`, bloqueio para débito na condição, ordem por ID, contas quentes materializadas, repetição no executor e limites de espera (perguntas 2, 3 e 12) |
+| [ADR 0006](../adr/0006-concorrencia-no-saldo.md) (aceita) | update condicional em `READ COMMITTED`, bloqueio na condição, ordem global de travamento, savepoint nas escritas condicionais, contas quentes materializadas, repetição no executor e limites de espera (perguntas 2, 3 e 12) |
 | ADR "Ledger como módulo isolado no canteen" (prevista) | construir em vez de usar pronto, fronteira de dados, o que foi copiado de cada referência (perguntas 6 e 9) |
-| ADR "Portas e adaptadores com DDD tático leve" (prevista) | unidade de trabalho para transação compartilhada (pergunta 14) |
+| ADR "Portas e adaptadores com DDD tático leve" (prevista) | unidade de trabalho para transação compartilhada, com savepoint aninhado (pergunta 14) |
 | `domain.md` (feito) | livro, lado normal, invariantes; questão em aberto: cantinas de donos diferentes na mesma escola |
 | Spec 0001 | schema, idempotência, erros, testes; fora de escopo: duas fases, hash encadeado |
 | Spec 0004 | idempotência da requisição: resposta guardada, chave simultânea |

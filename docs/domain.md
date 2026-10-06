@@ -146,13 +146,13 @@ O caixa consulta antes o que o aluno pode comprar (cardápio filtrado pelas regr
 Vale para toda operação que muda saldo: compra, estorno e pedido de recarga.
 
 - O cliente (caixa ou app) gera uma chave de idempotência por operação e a envia em toda tentativa; na retentativa, a mesma chave.
-- A chave é gravada com a operação, na mesma transação. Chave já existente: devolve o mesmo resultado da primeira vez (aprovada ou recusada), sem processar de novo.
+- A chave é reservada por escrita no início da operação, na mesma transação. Chave já existente: devolve o mesmo resultado da primeira vez (aprovada ou recusada), sem processar de novo; retentativa simultânea espera a primeira terminar.
 - Mesma chave com conteúdo diferente é erro do cliente e é rejeitada.
 - A chave é única por cantina. Recusas também guardam a chave, para que uma retentativa não mude o resultado.
 
 ## Fluxo de compra
 
-1. Verifica a chave de idempotência; se já existe, devolve o resultado gravado.
+1. Reserva a chave de idempotência; se já existe, devolve o resultado gravado.
 2. Identifica o aluno (QR ou matrícula) e o operador.
 3. Verifica:
    - aluno ativo;
@@ -174,6 +174,7 @@ Vale para toda operação que muda saldo: compra, estorno e pedido de recarga.
 - Limite diário: o estorno abate o gasto do dia em que a compra foi feita. Compra de hoje estornada libera o limite de hoje; compra de ontem estornada hoje não afeta o limite de hoje (o saldo volta normalmente).
 - Autorização: operador com a permissão "estornar compra do mesmo dia" estorna sozinho compras do dia. Sem a permissão, ou compra de outro dia, exige supervisor.
 - Prazo máximo: definido no cadastro da escola (30 dias nos dados de demo). Depois dele, nem o supervisor estorna.
+- Uma vez só: a compra passa de aprovada para estornada na própria escrita; um segundo estorno, mesmo simultâneo, recebe "já estornada".
 - Só total: um estorno desfaz a compra inteira. Item errado: estorna a compra e registra uma nova. Estorno parcial na v2.
 - Quando houver estoque (v2), o estorno publica um fato que o estoque consome.
 
