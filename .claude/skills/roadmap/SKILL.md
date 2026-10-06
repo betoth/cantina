@@ -41,7 +41,7 @@ Ao criar, replanejar ou quando pedido, verificar e reportar uma lacuna por vez:
 
 ## Atualização
 
-- Item que entra numa fase já `em andamento`: marcar com `*(não planejado)*` depois do texto.
+- Depois que o roadmap foi gerado e validado pelo usuário, todo item novo em qualquer fase (planejada ou em andamento) entra marcado com `*(não planejado)*` depois do texto. Assim o plano original fica distinguível do que surgiu na execução.
 - Entrega concluída: marcar o checkbox. Fase com todas as entregas marcadas e critério de pronto atendido: situação `concluída`.
 
 ## Fechamento

@@ -33,7 +33,10 @@ Do plano ao código, cada nível detalha o anterior:
 
 1. **Entrega** no [roadmap](docs/roadmap.md), que é o backlog. O refinamento começa pela skill `/refine`, que conduz os passos seguintes.
 2. **Caso de uso** detalhado em `docs/use-cases/`, pela skill `/use-case`, quando a entrega for um caso de uso. Lista as specs que o implementam.
-3. **Discovery** (condicional) em `docs/discovery/`, pela skill `/discovery`, quando houver decisão cara de reverter com alternativas reais: compara as opções e recomenda; as decisões saem nas ADRs, no `domain.md` e na spec. Não detalha o nível anterior, prepara as decisões dos seguintes; também antecede ADR de item de harness ou técnico, sem spec.
+3. **Discovery** (condicional) em `docs/discovery/`, pela skill `/discovery`, quando houver decisão cara de reverter com alternativas reais: compara as opções e recomenda. Não detalha o nível anterior, prepara as decisões dos seguintes; também antecede ADR de item de harness ou técnico, sem spec. As decisões saem:
+   - nas ADRs;
+   - no `domain.md`;
+   - na spec.
 4. **Spec** em `docs/specs/`, pela skill `/spec` (template em [.claude/skills/spec/template.md](.claude/skills/spec/template.md)): critérios de aceite numerados e testáveis, e as tarefas de implementação. Item de harness ou técnico não tem spec: o escopo fica no corpo da issue.
 5. **Issues** criadas já prontas para começar, pela skill `/cards`, no [quadro](https://github.com/users/betoth/projects/1).
 

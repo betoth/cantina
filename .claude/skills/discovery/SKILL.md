@@ -17,18 +17,34 @@ O discovery prepara decisões; não decide. A saída é uma recomendação funda
 ## Preparação
 
 1. Se `$ARGUMENTS` estiver vazio, usar o tema em discussão na conversa; se não estiver claro, perguntar qual e parar.
-2. Ler `docs/domain.md`, `docs/non-functional-requirements.md`, as ADRs e os casos de uso ligados ao tema.
+2. Ler:
+   - `docs/domain.md`;
+   - `docs/non-functional-requirements.md`;
+   - `docs/conventions.md`;
+   - as ADRs;
+   - os casos de uso ligados ao tema.
 3. Procurar em `docs/discovery/` um arquivo do mesmo tema. Existindo, aprofundar nele (pergunta existente ou nova); só criar outro arquivo para tema diferente.
 4. Listar as perguntas do discovery: só as que levam a decisão cara de reverter ou com trade-off real. Mostrar a lista e esperar o ok.
 
 ## Análise de cada pergunta
 
 1. **Pergunta explícita**, com o custo de errar e a reversibilidade (o que custa mudar depois).
-2. **Eliminatórios e critérios antes das opções.** Eliminatórios: o que a solução precisa cumprir de qualquer forma (invariantes, requisitos não funcionais, ADRs aceitas). Critérios: técnicos, do domínio e de mercado (adoção, maturidade do ecossistema, suporte da comunidade). Definir antes de olhar as opções evita escolher o critério que favorece a opção preferida.
+2. **Eliminatórios e critérios antes das opções.** Definir antes de olhar as opções evita escolher o critério que favorece a opção preferida.
+   - Eliminatórios: o que a solução precisa cumprir de qualquer forma (invariantes, requisitos não funcionais, ADRs aceitas).
+   - Critérios:
+     - técnicos;
+     - do domínio;
+     - de mercado (adoção, maturidade do ecossistema, suporte da comunidade).
 3. **Mercado:** como as referências resolvem, com fonte em cada afirmação. Separar fato medido (benchmark com máquina e carga) de opinião ou marketing.
 4. **Opções:** ao menos duas alternativas sérias, sempre incluindo a mais simples que atende aos eliminatórios. Cada opção descrita na sua melhor versão, como um defensor dela a apresentaria.
-5. **Comparação:** tabela critério × opção, mais prós, contras e limitações de cada uma (o que ela não resolve, em que escala ou cenário deixa de servir).
-6. **Custo-benefício** na escala real do projeto: custo de construir, de operar e de reverter, contra o benefício efetivo. Solução de escala maior que a necessária custa sem retorno.
+5. **Comparação:** tabela critério × opção e, para cada opção:
+   - prós;
+   - contras;
+   - limitações (o que ela não resolve, em que escala ou cenário deixa de servir).
+6. **Custo-benefício** na escala real do projeto: custo contra o benefício efetivo. Solução de escala maior que a necessária custa sem retorno. Custos a considerar:
+   - construir;
+   - operar;
+   - reverter.
 7. **Imparcialidade:** buscar ativamente evidência contra a opção que estiver na frente; não ancorar na primeira ideia nem na preferência de quem pergunta (incluindo a do usuário e a sua). Se a evidência for fraca ou faltar, dizer.
 8. **Antes de recomendar:**
    - *Pre-mortem:* "um ano depois, a opção recomendada deu errado; por quê?". Riscos que aparecerem entram em Riscos e limitações.

@@ -48,3 +48,32 @@ Fechei a Fase 0 e abri a Fase 1 pelo harness: a skill `/refine` ([#3](https://gi
 - C4 mostra a estrutura (containers); o fluxo do que é executado fica num fluxograma, dentro da spec.
 - No GitHub Projects, automações e visões só são configuradas pela interface; o `gh` e a API cuidam de issues, campos e itens.
 - Teste de aceite do card roda antes do merge, na branch; regressão roda depois, na `main`, ao fechar a fase.
+
+## 2026-10-06 · Fase 1: skill /discovery
+
+### Feito
+
+Criei a skill `/discovery` ([#7](https://github.com/betoth/cantina/issues/7)), a partir do formato que surgiu no discovery do ledger. Ela conduz a pesquisa de mercado e a comparação de opções antes de uma decisão cara de reverter, e entrou no fluxo por entrega entre o refinamento e as ADRs e specs.
+
+Testei usando a skill para adaptar o discovery do ledger ao template e aprofundar concorrência ([#6](https://github.com/betoth/cantina/issues/6)).
+
+### Decisões
+
+- Pensei em fazer um discovery novo só de concorrência. Fiquei com aprofundar o do ledger: o assunto já estava lá, e dois arquivos sobre o mesmo tema espalhariam a análise.
+- A skill ficou numa issue própria, separada do ledger, para cada PR tratar de uma coisa.
+- Pedi imparcialidade e custo-benefício explícitos. A skill exige:
+  - eliminatórios e critérios antes das opções;
+  - ao menos duas alternativas sérias, incluindo a mais simples;
+  - fonte em cada afirmação de mercado;
+  - pre-mortem;
+  - o que mudaria a recomendação.
+- O revisor apontou que o template não batia com o discovery do ledger. Entre aceitar os dois formatos e adaptar o ledger, adaptei o ledger.
+- Enumeração vai em lista, com subitens, nunca encadeada numa frase. Virou convenção para todo documento; o que já existe é ajustado quando for alterado.
+- A marca de não planejado no roadmap valia só para item que entrava numa fase em andamento. Mudei para todo item novo depois que o roadmap foi validado, em qualquer fase, para separar o plano original do que surgiu na execução.
+
+### Aprendizados e revisões
+
+- Spike: trabalho com prazo cuja saída é aprendizado e uma recomendação, não código.
+- Definir os critérios antes de olhar as opções evita escolher o critério que favorece a opção preferida.
+- Pre-mortem: imaginar que a decisão deu errado em um ano e perguntar por quê. Faz aparecer riscos que a análise a favor esconde.
+- Análise de sensibilidade: dizer o que teria que mudar para outra opção vencer.

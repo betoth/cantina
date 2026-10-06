@@ -13,7 +13,13 @@ Trabalhar no domínio. Tema: **$ARGUMENTS**
 
 ## Preparação
 
-1. Ler `docs/domain.md` (se existir), `docs/use-cases.md`, `docs/non-functional-requirements.md`, `docs/conventions.md`, as ADRs e o discovery do tema em `docs/discovery/`, se existir.
+1. Ler:
+   - `docs/domain.md` (se existir);
+   - `docs/use-cases.md`;
+   - `docs/non-functional-requirements.md`;
+   - `docs/conventions.md`;
+   - as ADRs;
+   - o discovery do tema em `docs/discovery/`, se existir.
 2. Se `$ARGUMENTS` estiver vazio, usar o tema em discussão na conversa. Se o arquivo não existir, criá-lo seguindo a estrutura abaixo, começando pela visão e pelos atores.
 
 ## Estrutura de `docs/domain.md`

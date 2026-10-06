@@ -49,7 +49,7 @@ flowchart LR
 
 ## Documentação
 
-- Enumeração com mais de dois itens, ou com itens que têm detalhe próprio, vai em lista, com subitens aninhados. Nada de itens encadeados numa frase com vírgula ou ponto e vírgula.
+- Enumeração com mais de dois itens, ou com itens que têm detalhe próprio, vai em lista, com subitens aninhados. Nada de itens encadeados numa frase com vírgula ou ponto e vírgula. Exceção: exemplos curtos entre parênteses.
 - Documento existente fora do formato é ajustado quando for alterado.
 
 ## Processo
