@@ -16,7 +16,7 @@ ADRs são trabalho pareado: você propõe, o usuário revisa e decide.
 ## Preparação
 
 1. Se `$ARGUMENTS` estiver vazio, usar a decisão em discussão na conversa; se não estiver clara, perguntar qual e parar.
-2. Ler o template [template.md](template.md), as ADRs existentes, `docs/domain.md` e `docs/conventions.md`.
+2. Ler o template [template.md](template.md), as ADRs existentes, `docs/domain.md`, `docs/conventions.md` e o discovery do tema em `docs/discovery/`, se existir: as opções e a comparação já feitas partem dele.
 3. Avaliar se a decisão é significativa: difícil de reverter, com trade-off real, afeta o desenho. Se não for, propor uma linha na tabela Stack dos READMEs em vez de ADR e esperar o usuário decidir.
 4. Se a decisão contradiz uma ADR aceita, ela substitui a anterior: avisar o usuário antes de seguir.
 
