@@ -128,7 +128,7 @@ Harness de IA:
 
 - [ ] Skill `/tests-from-spec`
 - [x] Skill `/refine` *(não planejado)* ([#3](https://github.com/betoth/cantina/issues/3))
-- [ ] Agent `reviewer` ([#2](https://github.com/betoth/cantina/issues/2))
+- [x] Agent `reviewer` ([#2](https://github.com/betoth/cantina/issues/2))
 - [ ] Agent `test-designer`
 - [ ] `.claude/settings.json`
 
