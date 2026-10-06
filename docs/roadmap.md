@@ -127,7 +127,7 @@ ADRs:
 Harness de IA:
 
 - [ ] Skill `/tests-from-spec`
-- [ ] Skill `/refine` *(não planejado)* ([#3](https://github.com/betoth/cantina/issues/3))
+- [x] Skill `/refine` *(não planejado)* ([#3](https://github.com/betoth/cantina/issues/3))
 - [ ] Agent `reviewer` ([#2](https://github.com/betoth/cantina/issues/2))
 - [ ] Agent `test-designer`
 - [ ] `.claude/settings.json`

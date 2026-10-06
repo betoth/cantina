@@ -48,13 +48,15 @@ Chamado pela skill `/refine`, com o corpo da issue já aprovado pelo usuário.
 
 - Início de uma entrega: só issue Ready (critérios da skill `/refine`); se faltar algo, refinar antes. Card para Em andamento; branch pela seção Git de `docs/conventions.md`.
 - Passo da issue concluído: marcar o checkbox no corpo da issue.
-- PR aberto (formato pela seção Git de `docs/conventions.md`), corpo com `Closes #N`; conferir que a automação moveu o card para Em revisão.
+- Antes do PR: revisão pelo agent `reviewer` (fluxo por tarefa do `CLAUDE.md`).
+- Último commit antes do PR: marcar no roadmap o checkbox da entrega que o PR conclui (regras da skill `/roadmap`), para a marcação entrar no mesmo PR. Entrega com várias issues (caso de uso com tarefas): marcar no PR da última.
+- PR aberto (formato pela seção Git de `docs/conventions.md`), corpo com `Closes #N` e a seção Revisão: cada achado e o que foi feito (corrigido, descartado com motivo, sugestão pendente com motivo); conferir que a automação moveu o card para Em revisão.
 - Testes do card, antes do merge, na branch:
   - Automático: marcar quando passar no `make check` (ou no CI, quando existir).
   - Manual: o usuário executa o roteiro e informa o resultado; marcar o item e comentar na issue data, roteiro e resultado.
   - Falhou: comentar o que falhou na issue; card de volta para Em andamento.
   - Item de teste sem marcar: não seguir para o merge.
-- PR mergeado: confirmar que a issue fechou e o card está em Feito; marcar o checkbox no roadmap (regras da skill `/roadmap`).
+- PR mergeado: confirmar que a issue fechou e o card está em Feito.
 - Entrega com issue que mudou de texto no roadmap: renomear a issue. Entrega removida: propor fechar a issue como não planejada.
 
 ## Issue fora do roadmap

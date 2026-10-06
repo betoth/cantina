@@ -36,7 +36,7 @@ flowchart LR
 
 - Commits no formato [Conventional Commits](https://www.conventionalcommits.org): `feat(ledger): add double-entry transaction`.
 - Branch por issue: `<tipo>/<issue>-<slug>`, ex.: `feat/12-register-purchase`.
-- PR com título no formato do commit; corpo com resumo, `Closes #N` e os testes do card.
+- PR com título no formato do commit; corpo com resumo, `Closes #N`, os testes do card e a revisão (achados e o que foi feito com cada um).
 - Merge por squash: um commit por PR na `main`.
 
 ## Dados
