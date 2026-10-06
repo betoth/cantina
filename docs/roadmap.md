@@ -121,6 +121,7 @@ Técnico:
 
 ADRs:
 
+- [x] 0005 Modelo contábil do ledger *(não planejado)* ([#6](https://github.com/betoth/cantina/issues/6))
 - [ ] Ledger como módulo isolado no canteen
 - [ ] Portas e adaptadores com DDD tático leve
 

@@ -38,7 +38,7 @@ Comum a todo ator com login.
 
 | ID | Caso de uso |
 |---|---|
-| UC-OPER-01 | Registrar compra para um aluno identificado por QR ou matrícula |
+| [UC-OPER-01](use-cases/UC-OPER-01-registrar-compra.md) | Registrar compra para um aluno identificado por QR ou matrícula |
 | UC-OPER-02 | Estornar compra (com supervisor quando exigido) |
 | UC-OPER-03 | Marcar produto como disponível ou esgotado hoje (só a disponibilidade, sem alterar outros dados do produto) |
 | UC-OPER-04 | Consultar o que o aluno pode comprar: cardápio filtrado pelas regras dele, saldo e limite restante do dia |
@@ -55,7 +55,7 @@ Comum a todo ator com login.
 
 | ID | Caso de uso |
 |---|---|
-| UC-ADMIN-01 | Cadastrar escola (inclui valores mínimo e máximo de recarga e prazo máximo de estorno) e cantina |
+| UC-ADMIN-01 | Cadastrar escola (inclui fuso horário, valores mínimo e máximo de recarga e prazo máximo de estorno) e cantina |
 | UC-ADMIN-02 | Cadastrar aluno (abre a carteira no ledger e gera o QR de identificação) |
 | UC-ADMIN-03 | Cadastrar responsável e vincular a alunos |
 | UC-ADMIN-04 | Gerenciar categorias |
