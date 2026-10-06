@@ -49,9 +49,11 @@ Fechei a Fase 0 e abri a Fase 1 pelo harness: a skill `/refine` ([#3](https://gi
 - No GitHub Projects, automações e visões só são configuradas pela interface; o `gh` e a API cuidam de issues, campos e itens.
 - Teste de aceite do card roda antes do merge, na branch; regressão roda depois, na `main`, ao fechar a fase.
 
-## 2026-10-06 · Fase 1: skill /discovery
+## 2026-10-06 · Fase 1: modelo contábil e concorrência do ledger, skill /discovery
 
 ### Feito
+
+Refinei o ledger antes da spec ([#6](https://github.com/betoth/cantina/issues/6)): detalhei o UC-OPER-01, fiz o discovery do ledger comparando ledgers de mercado e dois projetos de estudo, e registrei duas ADRs, o [modelo contábil](adr/0005-modelo-contabil-do-ledger.md) e a [concorrência no saldo](adr/0006-concorrencia-no-saldo.md). O `domain.md` foi alinhado às duas.
 
 Criei a skill `/discovery` ([#7](https://github.com/betoth/cantina/issues/7)), a partir do formato que surgiu no discovery do ledger. Ela conduz a pesquisa de mercado e a comparação de opções antes de uma decisão cara de reverter, e entrou no fluxo por entrega entre o refinamento e as ADRs e specs.
 
@@ -71,9 +73,28 @@ Testei usando a skill para adaptar o discovery do ledger ao template e aprofunda
 - Enumeração vai em lista, com subitens, nunca encadeada numa frase. Virou convenção para todo documento; no que já existe, o trecho alterado é ajustado.
 - A marca de não planejado no roadmap valia só para item que entrava numa fase em andamento. Mudei para todo item novo depois que o roadmap foi validado, em qualquer fase, para separar o plano original do que surgiu na execução.
 
+- Os dois projetos de estudo que analisei ensinaram mais pelos erros: lock no Redis liberado antes de gravar, idempotência por hash em cache de memória, ledger que se dizia imutável mas apagava lançamentos. Ficaram no discovery como anti-padrões.
+- Hash encadeado com digest externo, como no SQL Server Ledger, ficou para a v2: protege contra quem tem acesso ao banco, que não é o risco de uma cantina, e o encadeamento serializaria as escritas do recreio.
+- O ledger não tem API HTTP. Quem cria transação é o caso de uso (compra, estorno, recarga), dentro da transação do banco; ajuste manual, se existir, vira operação de negócio própria, com permissão e auditoria.
+- No começo achei estranho a entrada de Pix ficar negativa. Fiquei com o lado normal na conta e direção com valor positivo no lançamento, como a contabilidade e o Modern Treasury ([ADR 0005](adr/0005-modelo-contabil-do-ledger.md)).
+- Achei que as contas quentes seriam um problema. A estimativa mostrou que, no volume do projeto, a receita fica ocupada menos de 1% do tempo; fiquei com tudo materializado e síncrono, medindo na Fase 6 ([ADR 0006](adr/0006-concorrencia-no-saldo.md)).
+- A revisão achou falhas reais na primeira versão da ADR 0006, e as corrigi antes do merge:
+  - a recusa por saldo podia acontecer depois de a receita já ter sido creditada; resolvi com savepoint;
+  - compra e estorno podiam travar um ao outro pelo limite diário; resolvi com uma ordem global de travamento;
+  - retentativas e estornos simultâneos passavam por checagens de leitura; passaram a ser garantidos na escrita.
+
 ### Aprendizados e revisões
 
 - Spike: trabalho com prazo cuja saída é aprendizado e uma recomendação, não código.
 - Definir os critérios antes de olhar as opções evita escolher o critério que favorece a opção preferida.
 - Pre-mortem: imaginar que a decisão deu errado em um ano e perguntar por quê. Faz aparecer riscos que a análise a favor esconde.
 - Análise de sensibilidade: dizer o que teria que mudar para outra opção vencer.
+- Lado normal: cada conta cresce num lado. O que a cantina tem (dinheiro no banco) cresce no débito; o que ela deve (carteira do aluno) e o que ganha (receita) crescem no crédito. Lançamento do mesmo lado soma; do lado oposto, subtrai.
+- O "crédito" do extrato bancário é o ponto de vista do banco, para quem meu saldo é uma dívida. No livro da cantina, o dinheiro que entra no banco é débito.
+- Transação é o fato (o motivo, a chave de idempotência); lançamento é o efeito em cada conta. Uma transação tem dois ou mais lançamentos.
+- A versão da conta sobe a cada lançamento e mostra se algum se perdeu; com o saldo resultante gravado, o extrato não precisa recalcular nada.
+- Dinheiro em centavos inteiros: `float` erra e Go não tem decimal nativo.
+- Conta quente não vem da partida dobrada, vem do saldo materializado: inserir lançamento não disputa nada; atualizar a mesma linha de saldo, sim.
+- Update condicional em `READ COMMITTED`: o segundo `UPDATE` espera o primeiro e reavalia o `WHERE` com o saldo novo; a recusa por saldo vira "0 linhas", não erro.
+- Toda garantia sob concorrência tem que estar na escrita. Uma leitura antes da escrita deixa uma janela aberta.
+- Deadlock se evita travando as linhas sempre na mesma ordem, em todos os fluxos.

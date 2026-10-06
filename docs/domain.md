@@ -18,19 +18,21 @@ O que cada ator pode fazer: [use-cases.md](use-cases.md).
 
 | Termo | Termo no código | Definição |
 |---|---|---|
-| Escola | `School` | tenant; todas as consultas são isoladas por escola |
+| Escola | `School` | tenant; todas as consultas são isoladas por escola; define o fuso horário dos seus "dias" |
 | Cantina | `Canteen` | ponto de venda de uma escola; possui conta de receita no ledger |
 | Aluno | `Student` | dono de uma carteira; guarda o ID da sua conta no ledger |
 | Responsável | `Guardian` | adulto vinculado a um ou mais alunos |
 | Carteira | `Wallet` | conta do aluno no ledger |
-| Conta | `Account` | unidade contábil do ledger; não conhece seu dono |
-| Transação | `Transaction` | movimento contábil com dois ou mais lançamentos que somam zero |
-| Lançamento | `Entry` | débito ou crédito em uma conta, parte de uma transação |
+| Livro | `Book` | conjunto fechado de contas do ledger; transação só entre contas do mesmo livro; um por escola no MVP |
+| Conta | `Account` | unidade contábil do ledger; tem lado normal; não conhece seu dono |
+| Lado normal | `NormalBalance` | lado (débito ou crédito) em que o saldo da conta cresce |
+| Transação | `Transaction` | movimento contábil com dois ou mais lançamentos; total de débitos = total de créditos |
+| Lançamento | `Entry` | débito ou crédito de valor positivo em uma conta, parte de uma transação |
 | Compra | `Purchase` | venda autorizada; congela preço, categoria e versão das regras |
 | Estorno | `Refund` | cancelamento de compra via transação inversa |
 | Recarga | `TopUp` | crédito na carteira após confirmação do Pix |
 | Regras | `RuleSet` | conjunto versionado de restrições definido pelos responsáveis |
-| Limite diário | `DailyLimit` | valor máximo gasto por dia no fuso America/Sao_Paulo |
+| Limite diário | `DailyLimit` | valor máximo gasto por dia no fuso da escola |
 | Bloqueio | `WalletBlock` | suspensão de débitos na carteira, feita pelo responsável ou pelo aluno, com autor registrado; créditos continuam entrando |
 | QR de identificação | `IdentificationToken` | token aleatório do aluno, lido no caixa; reemissão invalida o anterior |
 | Consentimento | `Consent` | aceite do termo por um responsável; o aluno compra se ao menos um responsável aceitou |
@@ -75,11 +77,18 @@ Critério: se pode acontecer segundos depois ou ser retentado sem problema, é c
 ## Ledger
 
 - **Append-only:** nada é editado ou apagado. Cancelamento é uma transação inversa que referencia a original.
-- **Partida dobrada:** toda transação movimenta ao menos duas contas e soma zero.
-- **Contas:** uma por aluno (carteira); por cantina, uma de receita e uma de entrada de Pix.
-- **Não conhece donos:** aluno e cantina guardam o ID da sua conta. O ledger só conhece propriedades contábeis: pode ficar negativa, ativa ou bloqueada para débito.
+- **Partida dobrada:** toda transação movimenta ao menos duas contas, e o total de débitos é igual ao total de créditos.
+- **Livro:** as contas de uma escola formam um livro; transação só entre contas do mesmo livro. O livro segue quem guarda o dinheiro: no MVP, uma cantina por escola, um livro por escola.
+- **Contas:**
+  - uma por aluno (carteira);
+  - por cantina, uma de receita e uma de entrada de Pix.
+- **Não conhece donos:** aluno e cantina guardam o ID da sua conta. O ledger só conhece propriedades contábeis:
+  - lado normal;
+  - se pode ficar negativa;
+  - ativa ou bloqueada para débito.
+- **Lado normal:** definido na abertura da conta. Lançamento do mesmo lado aumenta o saldo; do lado oposto, diminui. Toda conta saudável tem saldo positivo; saldo negativo indica erro, salvo em conta marcada como podendo ficar negativa. Modelo: [ADR 0005](adr/0005-modelo-contabil-do-ledger.md).
 - **Abertura de conta** é idempotente e acontece na mesma transação do cadastro do aluno.
-- **Saldo materializado** atualizado com lock ou update condicional; reconciliado com a soma dos lançamentos.
+- **Saldo materializado** atualizado com update condicional ([ADR 0006](adr/0006-concorrencia-no-saldo.md)); reconciliado com a soma dos lançamentos.
 - **Idempotência** por chave única. Uma transação não pode ser estornada duas vezes.
 - **Imutabilidade** garantida também por permissões do banco.
 - Fechamento por operador ou turno é relatório da cantina, não conta no ledger.
@@ -92,7 +101,13 @@ Critério: se pode acontecer segundos depois ou ser retentado sem problema, é c
 | Compra | carteira do aluno | receita da cantina |
 | Estorno de compra | receita da cantina | carteira do aluno |
 
-A conta de entrada de Pix fica negativa por definição.
+| Conta | O que é para a cantina | Lado normal |
+|---|---|---|
+| entrada de Pix | dinheiro que ela tem no banco | débito |
+| carteira do aluno | crédito pré-pago que ela deve ao aluno | crédito |
+| receita da cantina | o que ela ganhou com vendas | crédito |
+
+A qualquer momento, entrada de Pix = soma das carteiras + receita.
 
 ### Recarga
 
@@ -115,9 +130,9 @@ Não há repasse. Um modelo em que a plataforma recebe e repassa à cantina (com
 
 ### Invariantes
 
-1. Toda transação soma zero.
-2. A soma de todos os saldos é zero.
-3. Saldo materializado = soma dos lançamentos da conta.
+1. Em toda transação, total de débitos = total de créditos.
+2. Em cada livro, total de débitos = total de créditos.
+3. Saldo materializado = soma dos lançamentos da conta, pelo lado normal.
 4. Conta que não pode ficar negativa nunca fica negativa.
 5. Uma chave de idempotência gera no máximo uma transação.
 6. Uma transação é estornada no máximo uma vez.
@@ -131,22 +146,26 @@ O caixa consulta antes o que o aluno pode comprar (cardápio filtrado pelas regr
 Vale para toda operação que muda saldo: compra, estorno e pedido de recarga.
 
 - O cliente (caixa ou app) gera uma chave de idempotência por operação e a envia em toda tentativa; na retentativa, a mesma chave.
-- A chave é gravada com a operação, na mesma transação. Chave já existente: devolve o mesmo resultado da primeira vez (aprovada ou recusada), sem processar de novo.
+- A chave é reservada por escrita no início da operação, na mesma transação. Chave já existente: devolve o mesmo resultado da primeira vez (aprovada ou recusada), sem processar de novo; retentativa simultânea espera a primeira terminar.
 - Mesma chave com conteúdo diferente é erro do cliente e é rejeitada.
 - A chave é única por cantina. Recusas também guardam a chave, para que uma retentativa não mude o resultado.
 
 ## Fluxo de compra
 
-1. Verifica a chave de idempotência; se já existe, devolve o resultado gravado.
+1. Reserva a chave de idempotência; se já existe, devolve o resultado gravado.
 2. Identifica o aluno (QR ou matrícula) e o operador.
-3. Verifica: aluno ativo, ao menos um responsável com consentimento, carteira sem bloqueio, produtos disponíveis hoje e com categoria.
+3. Verifica:
+   - aluno ativo;
+   - ao menos um responsável com consentimento;
+   - produtos disponíveis hoje e com categoria.
 4. Avalia as regras do responsável (função pura no domínio), com a versão vigente conferida no banco.
-5. Verifica o limite diário.
-6. Verifica o saldo e debita no ledger.
+5. Soma a compra ao gasto do dia, só se couber no limite diário.
+6. Debita no ledger, só se a carteira não estiver bloqueada e tiver saldo.
 7. Grava a compra (chave de idempotência, preço e categoria congelados, versão das regras, operador, cantina, terminal), a auditoria, o evento e o pedido de aviso no outbox.
 
+- **Garantia na escrita:** bloqueio, limite diário e saldo são garantidos na própria escrita dos passos 5 e 6, não numa leitura anterior ([ADR 0006](adr/0006-concorrencia-no-saldo.md)). Consultar antes (ex.: o cardápio filtrado no caixa) é conveniência.
 - **Compra atômica:** aprovada ou recusada inteira, nunca parcial. A recusa informa o motivo e os itens ou o valor que a causaram; o caixa ajusta e envia uma compra nova.
-- **Recusa** (verificação negativa nos passos 3 a 6): grava a tentativa recusada com o motivo, a auditoria e o pedido de aviso. Nada é debitado.
+- **Recusa** (verificação negativa nos passos 3 a 6): grava a tentativa recusada com o motivo, a auditoria e o pedido de aviso. Nada é debitado e o gasto do dia não muda.
 - **Erro técnico** em qualquer passo: desfaz tudo; nada é gravado.
 
 ## Estorno
@@ -155,6 +174,7 @@ Vale para toda operação que muda saldo: compra, estorno e pedido de recarga.
 - Limite diário: o estorno abate o gasto do dia em que a compra foi feita. Compra de hoje estornada libera o limite de hoje; compra de ontem estornada hoje não afeta o limite de hoje (o saldo volta normalmente).
 - Autorização: operador com a permissão "estornar compra do mesmo dia" estorna sozinho compras do dia. Sem a permissão, ou compra de outro dia, exige supervisor.
 - Prazo máximo: definido no cadastro da escola (30 dias nos dados de demo). Depois dele, nem o supervisor estorna.
+- Uma vez só: a compra passa de aprovada para estornada na própria escrita; um segundo estorno, mesmo simultâneo, recebe "já estornada".
 - Só total: um estorno desfaz a compra inteira. Item errado: estorna a compra e registra uma nova. Estorno parcial na v2.
 - Quando houver estoque (v2), o estorno publica um fato que o estoque consome.
 
@@ -172,7 +192,7 @@ Vale para toda operação que muda saldo: compra, estorno e pedido de recarga.
 - Conjunto de regras por aluno, versionado e imutável: cada alteração cria nova versão.
 - Modos: lista de bloqueio ou lista de permissão. Alvos: produto ou categoria.
 - Precedência: produto vence categoria; em empate, bloqueio vence.
-- Limite diário de valor, com dia no fuso America/Sao_Paulo.
+- Limite diário de valor, com dia no fuso da escola.
 - Concorrência otimista: versão inteira por aluno, exposta via ETag/If-Match; conflito retorna 409.
 - Compra concorrente com alteração de regras: a compra usa a versão vigente no momento da sua transação e a registra. Alteração confirmada vale da compra seguinte em diante; nenhuma compra usa versão que não estava vigente.
 - A compra registra a versão aplicada. Cache invalidado pelo evento de alteração, mas a autorização sempre confere a versão no banco.
@@ -233,6 +253,12 @@ Vale para toda operação que muda saldo: compra, estorno e pedido de recarga.
 
 Uma escola e uma cantina no MVP, mas escola e cantina já existem no modelo. Toda consulta é isolada por escola.
 
+## Fuso horário
+
+- Instantes (quando algo aconteceu) são guardados em UTC.
+- Cada escola tem o seu fuso, pelo nome IANA (ex.: `America/Manaus`), definido no cadastro. Nome, não deslocamento: as regras de horário de verão vêm da base IANA.
+- Todo "dia" do domínio usa o fuso da escola: limite diário, prazo e dia da compra no estorno, relatório de consumo.
+
 ## Escopo
 
 Casos de uso do MVP e da v2: [use-cases.md](use-cases.md).
@@ -241,4 +267,4 @@ Capacidades técnicas do MVP, que não são casos de uso: ledger, outbox, jobs, 
 
 ## Questões em aberto
 
-Nenhuma no momento.
+- Cantinas de donos diferentes na mesma escola: livro por cantina (o aluno teria uma carteira em cada) ou recebimento pela plataforma com repasse (UC-SIS-04, v2)?
