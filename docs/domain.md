@@ -79,7 +79,9 @@ Critério: se pode acontecer segundos depois ou ser retentado sem problema, é c
 - **Append-only:** nada é editado ou apagado. Cancelamento é uma transação inversa que referencia a original.
 - **Partida dobrada:** toda transação movimenta ao menos duas contas, e o total de débitos é igual ao total de créditos.
 - **Livro:** as contas de uma escola formam um livro; transação só entre contas do mesmo livro. O livro segue quem guarda o dinheiro: no MVP, uma cantina por escola, um livro por escola.
-- **Contas:** uma por aluno (carteira); por cantina, uma de receita e uma de entrada de Pix.
+- **Contas:**
+  - uma por aluno (carteira);
+  - por cantina, uma de receita e uma de entrada de Pix.
 - **Não conhece donos:** aluno e cantina guardam o ID da sua conta. O ledger só conhece propriedades contábeis: lado normal, pode ficar negativa, ativa ou bloqueada para débito.
 - **Lado normal:** definido na abertura da conta. Lançamento do mesmo lado aumenta o saldo; do lado oposto, diminui. Toda conta saudável tem saldo positivo; saldo negativo indica erro, salvo em conta marcada como podendo ficar negativa. Modelo: [ADR 0005](adr/0005-modelo-contabil-do-ledger.md).
 - **Abertura de conta** é idempotente e acontece na mesma transação do cadastro do aluno.

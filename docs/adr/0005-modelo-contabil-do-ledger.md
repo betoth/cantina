@@ -54,7 +54,12 @@ Efeito no saldo: direção do lançamento igual ao lado normal soma; diferente s
 | compra de R$ 45 | D carteira / C receita | 120 | 75 | 45 |
 | estorno da compra | D receita / C carteira | 120 | 120 | 0 |
 
-Invariantes: cada transação tem débitos = créditos; por livro, total de débitos = total de créditos; saldo da conta = soma dos seus lançamentos pelo lado normal; nenhuma conta fica negativa, salvo as marcadas como podendo.
+Invariantes:
+
+- Cada transação tem débitos = créditos.
+- Por livro, total de débitos = total de créditos.
+- Saldo da conta = soma dos seus lançamentos pelo lado normal.
+- Nenhuma conta fica negativa, salvo as marcadas como podendo.
 
 ### Histórico
 
@@ -71,8 +76,17 @@ Invariantes: cada transação tem débitos = créditos; por livro, total de déb
 
 ## Consequências
 
-- Positivas: saldos legíveis sem conhecer convenção; "nenhuma conta negativa" serve de checagem única na reconciliação e em alertas; transações com mais de duas contas sem mudar o modelo; extrato e saldo histórico direto dos lançamentos; dinheiro exato em todas as camadas; modelo comparável campo a campo com o Modern Treasury.
-- Negativas: `CASE` pelo lado normal nas somas de saldo e de verificação; lado normal é uma propriedade a mais que quem abre a conta precisa acertar, mitigado por tabela fixa no canteen coberta por teste e pelo `CHECK` de saldo, que recusa o primeiro lançamento de uma conta aberta com o lado errado; saldo resultante e versão em cada lançamento são redundância a manter coerente (coberta pela reconciliação).
+- Positivas:
+  - Saldos legíveis sem conhecer convenção.
+  - "Nenhuma conta negativa" serve de checagem única na reconciliação e em alertas.
+  - Transações com mais de duas contas sem mudar o modelo.
+  - Extrato e saldo histórico direto dos lançamentos.
+  - Dinheiro exato em todas as camadas.
+  - Modelo comparável campo a campo com o Modern Treasury.
+- Negativas:
+  - `CASE` pelo lado normal nas somas de saldo e de verificação.
+  - Lado normal é uma propriedade a mais que quem abre a conta precisa acertar. Mitigado por tabela fixa no canteen coberta por teste e pelo `CHECK` de saldo, que recusa o primeiro lançamento de uma conta aberta com o lado errado.
+  - Saldo resultante e versão em cada lançamento são redundância a manter coerente (coberta pela reconciliação).
 
 ## Prós e contras das opções
 
@@ -80,19 +94,36 @@ Invariantes: cada transação tem débitos = créditos; por livro, total de déb
 
 Lançamento com valor positivo (crédito) ou negativo (débito); saldo de toda conta = créditos − débitos. Usado por pgledger e Formance (a conta `@world`, origem de todo dinheiro, fica negativa).
 
-- Prós: soma direta em SQL, sem `CASE`; uma regra só para todas as contas; soma zero vira `sum(amount) = 0`.
-- Contras: contas de ativo ficam negativas no uso normal (a entrada de Pix com R$ 100 no banco aparece −100); o sinal sozinho não diz se há erro, então "pode ficar negativa" vira flag de toda conta de sistema; leitura depende de conhecer a convenção.
+- Prós:
+  - Soma direta em SQL, sem `CASE`.
+  - Uma regra só para todas as contas.
+  - Soma zero vira `sum(amount) = 0`.
+- Contras:
+  - Contas de ativo ficam negativas no uso normal (a entrada de Pix com R$ 100 no banco aparece −100).
+  - O sinal sozinho não diz se há erro, então "pode ficar negativa" vira flag de toda conta de sistema.
+  - Leitura depende de conhecer a convenção.
 
 ### Direção e valor positivo no lançamento, lado normal na conta
 
 Lançamento com `direction` (`debit` ou `credit`) e `amount > 0`; conta com `normal_balance`. Direção igual ao lado normal soma; oposta subtrai. Modelo da contabilidade e do Modern Treasury (`normal_balance` e `lock_version` na conta; `direction`, `amount` e `resulting_ledger_account_balances` no lançamento).
 
-- Prós: toda conta saudável fica positiva, e negativo é sempre anomalia (uma checagem só na reconciliação); cada linha se lê sozinha; mesmo vocabulário da contabilidade e da referência de mercado mais usada.
-- Contras: `CASE` em toda soma (saldo e soma zero); uma propriedade a mais na abertura de conta, que quem chama precisa acertar.
+- Prós:
+  - Toda conta saudável fica positiva, e negativo é sempre anomalia (uma checagem só na reconciliação).
+  - Cada linha se lê sozinha.
+  - Mesmo vocabulário da contabilidade e da referência de mercado mais usada.
+- Contras:
+  - `CASE` em toda soma (saldo e soma zero).
+  - Uma propriedade a mais na abertura de conta, que quem chama precisa acertar.
 
 ### Débitos e créditos acumulados separados na conta
 
 Conta guarda `debits_posted` e `credits_posted`; o saldo é calculado por quem lê. Modelo do TigerBeetle, que usa flags (`debits_must_not_exceed_credits`) no lugar do lado normal.
 
-- Prós: nenhuma convenção gravada; qualquer leitura de saldo é possível; acumulados só crescem.
-- Contras: a regra "não pode ficar negativa" vira comparação entre duas colunas, e o saldo não existe como valor pronto para o update condicional; o lado continua precisando estar em algum lugar (flag ou código de quem lê); mais distante do vocabulário de quem lê o extrato.
+- Prós:
+  - Nenhuma convenção gravada.
+  - Qualquer leitura de saldo é possível.
+  - Acumulados só crescem.
+- Contras:
+  - A regra "não pode ficar negativa" vira comparação entre duas colunas, e o saldo não existe como valor pronto para o update condicional.
+  - O lado continua precisando estar em algum lugar (flag ou código de quem lê).
+  - Mais distante do vocabulário de quem lê o extrato.
