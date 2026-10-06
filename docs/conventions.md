@@ -47,6 +47,11 @@ flowchart LR
 - Dados de demonstração criados pela API de cadastro, nunca por insert direto no banco. Seed direto só como simplificação temporária registrada no roadmap.
 - Mocks e dados em memória só em testes.
 
+## Documentação
+
+- Enumeração com mais de dois itens, ou com itens que têm detalhe próprio, vai em lista, com subitens aninhados. Nada de itens encadeados numa frase com vírgula ou ponto e vírgula. Exceção: exemplos curtos entre parênteses.
+- Em documento existente fora do formato, o trecho alterado é ajustado.
+
 ## Processo
 
 - Criar arquivo, pasta, dependência ou ferramenta só quando for usado. Nada de stubs, pastas vazias ou placeholders.

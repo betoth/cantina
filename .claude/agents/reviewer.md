@@ -26,6 +26,7 @@ As regras não ficam aqui. Para cada artefato alterado, leia a fonte e cobre o q
 | Spec (`docs/specs/`) | `.claude/skills/spec/SKILL.md` e `template.md` |
 | Caso de uso (`docs/use-cases*`) | `.claude/skills/use-case/` e `.claude/skills/use-cases/` |
 | ADR (`docs/adr/`) | `.claude/skills/adr/` |
+| Discovery (`docs/discovery/`) | `.claude/skills/discovery/SKILL.md` e `template.md` |
 | Domínio, RNF, roadmap, convenções, diário | `.claude/skills/<domain, requirements, roadmap, conventions, journal>/SKILL.md` |
 | Skills, agents e `CLAUDE.md` | seção Harness do `CLAUDE.md`, o formato das skills existentes e a coerência com as skills que citam o trecho alterado |
 | Issue (só quando o texto vier na instrução; o revisor não tem `gh`) | `.claude/skills/cards/template.md` e critérios de Ready da `.claude/skills/refine/SKILL.md` |

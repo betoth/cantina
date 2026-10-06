@@ -15,7 +15,14 @@ Specs são trabalho pareado: você propõe, o usuário revisa e decide.
 
 ## Preparação
 
-1. Ler o template [template.md](template.md), `docs/use-cases.md` (e o detalhe dos casos de uso envolvidos em `docs/use-cases/`, se existir), `docs/non-functional-requirements.md`, `docs/domain.md`, `docs/conventions.md` e as ADRs em `docs/adr/` relacionadas à funcionalidade.
+1. Ler:
+   - o template [template.md](template.md);
+   - `docs/use-cases.md` e o detalhe dos casos de uso envolvidos em `docs/use-cases/`, se existir;
+   - `docs/non-functional-requirements.md`;
+   - `docs/domain.md`;
+   - `docs/conventions.md`;
+   - as ADRs em `docs/adr/` relacionadas à funcionalidade;
+   - o discovery do tema em `docs/discovery/`, se existir.
 2. Ler specs existentes em `docs/specs/` que tenham relação com esta, para não contradizê-las.
 3. Se `$ARGUMENTS` estiver vazio, usar a funcionalidade em discussão na conversa; se não estiver clara, perguntar qual e parar.
 
