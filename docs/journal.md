@@ -99,17 +99,29 @@ Testei usando a skill para adaptar o discovery do ledger ao template e aprofunda
 - Toda garantia sob concorrência tem que estar na escrita. Uma leitura antes da escrita deixa uma janela aberta.
 - Deadlock se evita travando as linhas sempre na mesma ordem, em todos os fluxos.
 
-## 2026-10-09 · Fase 1: custo de IA por issue (tokencost) e conferência do quadro
+## 2026-10-09 · Fase 1: custo de IA por issue (tokencost), conferência do quadro e redução do custo de tokens
 
 ### Feito
 
-Refinei a medição do custo de IA a partir de uma especificação que eu tinha escrito, e ela virou duas issues: a coleta ([#11](https://github.com/betoth/cantina/issues/11)) e a saída, com relatório, comentário na issue e gráfico ([#12](https://github.com/betoth/cantina/issues/12)).
+Refinei a medição do custo de IA e ela virou duas issues, ambas implementadas.
 
-Implementei a coleta ([#13](https://github.com/betoth/cantina/pull/13)): o CLI `tokencost` em `tools/`, chamado pelos hooks de início e fim de sessão, lê os transcripts locais do Claude Code e grava em `docs/ai-costs.csv` os tokens e o custo por sessão, issue e modelo. Só números saem da máquina. A primeira coleta importou as sessões anteriores do projeto.
+- Coleta ([#11](https://github.com/betoth/cantina/issues/11), PR [#13](https://github.com/betoth/cantina/pull/13)): o CLI `tokencost` em `tools/`, chamado pelos hooks de sessão, grava em `docs/ai-costs.csv` os tokens e o custo por sessão, issue e modelo. Só números saem da máquina.
+- Saída ([#12](https://github.com/betoth/cantina/issues/12), PR [#14](https://github.com/betoth/cantina/pull/14)):
+  - relatório do custo da issue e das sub-issues;
+  - [comentário de custo](https://github.com/betoth/cantina/issues/11#issuecomment-6077889328) na issue, atualizado em vez de duplicado;
+  - gráfico em `docs/ai-costs.md`.
 
-Implementei a saída ([#12](https://github.com/betoth/cantina/issues/12)): o `report` mostra o custo de uma issue e das sub-issues e publica um comentário na issue, que é atualizado em vez de duplicado; o `chart` gera o `docs/ai-costs.md` com o custo por issue e o acumulado por semana. A #11 já tem o [comentário de custo](https://github.com/betoth/cantina/issues/11#issuecomment-6077889328).
+Ajustei a skill `/cards` para conferir o card cerca de 30 s depois de abrir e de mergear o PR ([#9](https://github.com/betoth/cantina/issues/9), PR [#15](https://github.com/betoth/cantina/pull/15)): no merge do PR #8, as automações do quadro rodaram fora de ordem e o card voltou de Feito para Em revisão.
 
-Ajustei a skill `/cards` para conferir o card cerca de 30 s depois de abrir e de mergear o PR ([#9](https://github.com/betoth/cantina/issues/9)): no merge do PR #8, as automações do quadro rodaram fora de ordem e o card voltou de Feito para Em revisão.
+Com os primeiros números do `tokencost`, fiz um discovery do custo de tokens ([#16](https://github.com/betoth/cantina/issues/16)): US$ 98 em 5 dias, 48% em reler o contexto, com média de 184 k tokens por request e nenhuma compactação. Apliquei as recomendações no harness:
+
+- uma sessão por etapa do fluxo, com `/clear` sugerido no fim, inclusive na `/refine`;
+- compactação automática em 200 k;
+- um hook que retoma a sessão com a branch, a issue e os passos abertos;
+- Sonnet nas tarefas delegadas;
+- leitura por seção nas skills e pesquisa web por subagent na `/discovery`;
+- `effort: low` em `/journal` e `/roadmap`, como experimento;
+- menos pedidos de confirmação e perguntas fechadas agrupadas.
 
 ### Decisões
 
@@ -125,8 +137,19 @@ Ajustei a skill `/cards` para conferir o card cerca de 30 s depois de abrir e de
 - O teste da #9 só podia ser observado depois do merge, mas a regra exigia todo teste marcado antes. Criei o tipo `(manual, depois do merge)`, que não bloqueia o merge e reabre a issue se falhar.
 - Sem o `gh`, o `report` mostra só o custo da própria issue, como a #12 pedia. Com `-comment`, mudei de ideia na revisão: ele não publica e sai com erro, para não trocar um comentário completo, com as sub-issues, por um parcial.
 - O custo da #11 saiu em US$ 9,13, mas é um piso: a sessão que fechei sem querer não gravou o `cost-state` e perdeu o `overhead`, e o refinamento feito na `main` caiu em "sem issue". Atribuir esse custo à issue ficou como item no roadmap, junto com um discovery para reduzir o custo de tokens.
+- Mantive as regras novas no `CLAUDE.md` em vez de movê-las para skills: o fluxo vale para toda sessão, e tirá-lo de lá arriscaria o Claude pular etapas.
+- O caveman ficou no nível `lite`, e não foi removido nem levado ao máximo: o efeito no custo é marginal, e a decisão é de clareza. Um A/B com o `tokencost` depois do merge vai dizer se vale manter.
+- Medi o prefixo fixo com `/context` numa sessão nova: 31,1 k tokens.
+  - Prompt do sistema e ferramentas: 19,9 k, fora do meu controle.
+  - Memória: 4,8 k.
+  - Mensagens dos hooks: 1,5 k.
+  - Skills: 4,7 k, das quais ~2,1 k das skills sincronizadas do claude.ai (documentos, planilhas, apresentações), sem uso neste projeto.
+  - Ia desligar as sincronizadas, mas não desliguei: elas vêm da conta, não de um plugin do projeto, então sairiam de todos os projetos, para economizar uns US$ 3 por mês.
+- A revisão da #16 mostrou que a `/refine` ainda encadeava caso de uso, spec e cadastro na mesma sessão, contra a regra nova. Na terceira rodada, a primeira correção tinha deixado sem dono a issue do caso de uso e a conferência do Ready. Fiquei com a `/refine` reentrante: ela conduz uma etapa por sessão, e a sessão nova chama a `/refine` de novo, que segue do ponto em que parou. O cadastro continua no fechamento dela, sem mexer na `/cards` e com uma ressalva no passo 16 da `/spec`, e num caso de uso só acontece quando a última spec é aprovada, para o roadmap não marcar como pronta uma entrega com specs ainda por refinar.
 
 ### Aprendizados e revisões
 
 - O cache de prompt tem dois TTLs com preços diferentes: a escrita de 5 min custa 1,25× a entrada, a de 1 h, 2×.
 - O transcript do Claude Code não é a conta completa: o total real da sessão só aparece no `cost-state`, e só quando a sessão termina normalmente.
+- O prefixo fixo é relido do cache a cada request, então cada 1 k tokens a mais pesa em toda a sessão. Mesmo assim, 2 k de prefixo valem pouco perto do contexto que cresce numa sessão longa.
+- A memória do projeto (`CLAUDE.md` com `conventions.md`) subiu de ~2,5 k para ~4,3 k tokens com as regras desta issue. Reduzir custo também acrescenta texto fixo.

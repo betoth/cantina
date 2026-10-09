@@ -15,6 +15,8 @@ Specs são trabalho pareado: você propõe, o usuário revisa e decide.
 
 ## Preparação
 
+Documentos de `docs/` são lidos por seção: primeiro o índice de títulos (`grep -n '^#' <arquivo>`), depois só as seções ligadas ao tema. O documento inteiro só quando a tarefa o percorre todo (ex.: checagem de cobertura).
+
 1. Ler:
    - o template [template.md](template.md);
    - `docs/use-cases.md` e o detalhe dos casos de uso envolvidos em `docs/use-cases/`, se existir;
@@ -46,6 +48,6 @@ Specs são trabalho pareado: você propõe, o usuário revisa e decide.
 ## Fechamento
 
 15. Questões do `domain.md` resolvidas durante a spec: registrar a decisão na seção correspondente do `domain.md` e remover a questão da lista de abertas.
-16. Mostrar ao usuário um resumo dos critérios de aceite e das tarefas e pedir revisão. Status passa a `aprovada` só quando o usuário aprovar. Com a spec aprovada, as tarefas viram issues pela skill `/cards`.
+16. Mostrar ao usuário um resumo dos critérios de aceite e das tarefas e pedir revisão. Status passa a `aprovada` só quando o usuário aprovar. Com a spec aprovada, as tarefas viram issues pela skill `/cards`; num caso de uso, pelo Fechamento da `/refine`, quando a última spec do caso for aprovada.
 
 Não escrever testes nem código neste fluxo.

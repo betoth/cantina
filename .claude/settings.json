@@ -1,7 +1,9 @@
 {
+  "autoCompactWindow": 200000,
   "hooks": {
     "SessionStart": [
-      { "hooks": [{ "type": "command", "command": "command -v tokencost >/dev/null && tokencost record || true" }] }
+      { "hooks": [{ "type": "command", "command": "command -v tokencost >/dev/null && tokencost record || true" }] },
+      { "matcher": "startup|clear", "hooks": [{ "type": "command", "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/resume.sh || true", "timeout": 10 }] }
     ],
     "SessionEnd": [
       { "hooks": [{ "type": "command", "command": "command -v tokencost >/dev/null && tokencost record || true" }] }

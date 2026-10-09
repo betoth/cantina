@@ -15,22 +15,30 @@ Nada vai para o GitHub antes de estar refinado. O roadmap é o backlog; a issue 
 
 ## Preparação
 
+Documentos de `docs/` são lidos por seção: primeiro o índice de títulos (`grep -n '^#' <arquivo>`), depois só as seções ligadas ao tema. O documento inteiro só quando a tarefa o percorre todo (ex.: checagem de cobertura).
+
 1. Se `$ARGUMENTS` estiver vazio, usar o item em discussão na conversa; se não estiver claro, perguntar qual e parar.
 2. Ler `docs/roadmap.md`, o [template de issue](../cards/template.md) e os documentos ligados ao item.
 3. Conferir se o item já tem issue (`gh issue list --search`). Se tiver, refinar e propor a edição do corpo em vez de criar outra.
 
 ## Caminho
 
-- **Caso de uso:** conduzir a skill `/use-case` (se o detalhe não existir) e depois a `/spec` de cada spec listada no caso que ainda não estiver aprovada. Spec que depende de decisão cara de reverter, com alternativas reais: `/discovery` antes. A issue do caso de uso e as das tarefas das specs saem desses documentos.
+- **Caso de uso:** conduzir uma etapa por sessão (seção Sessões do `CLAUDE.md`), a próxima que faltar:
+  - `/use-case`, se o detalhe não existir;
+  - `/discovery` e as saídas dele (`/adr`, `/domain`), se a próxima spec depender de decisão cara de reverter, com alternativas reais;
+  - `/spec` de cada spec listada no caso que ainda não estiver aprovada.
+  - As issues saem desses documentos e são cadastradas pelo Fechamento só quando a última spec do caso for aprovada: primeiro a issue do caso de uso, depois as das tarefas, como sub-issues dela.
+  - No fim de cada etapa, sugerir `/clear` e dar a frase de retomada, que nomeia o refino de origem (ex.: "continue o refino do UC-OPER-01, próximo passo: spec da compra").
 - **Harness ou técnico:** refinar na conversa e montar o corpo da issue, com a seção Escopo preenchida.
 - **Fora do roadmap** (parte de uma entrega, item que atravessa várias, bug): seguir "Issue fora do roadmap" da skill `/cards`. Se for algo que se pediria como entrega do produto, propor primeiro a entrada no roadmap (`/roadmap`).
-- Pular o que já estiver pronto (caso detalhado, spec aprovada) e seguir do ponto em que parou.
+- Refino com etapas em várias sessões: a sessão nova chama a `/refine` de novo, que pula o que já estiver pronto (caso detalhado, discovery e ADR gravados, spec aprovada) e segue do ponto em que parou.
+  - Todas as specs aprovadas e issues faltando (a sessão caiu antes do Fechamento): ir direto ao Fechamento, conferindo com `gh issue list --search` quais já existem.
 
 ## Refinamento de harness ou técnico
 
 4. Levantar para si as lacunas: o que entra, o que não entra, como verificar, dependências, modo (manual, pareado, delegado, pela tabela do `CLAUDE.md`).
 5. Perguntar cada lacuna ao usuário.
-6. Decisão significativa (difícil de reverter, trade-off real): registrar com `/adr` e citar na issue. Com alternativas reais ainda não comparadas, `/discovery` antes da ADR.
+6. Decisão significativa (difícil de reverter, trade-off real): registrar com `/adr` e citar na issue. Com alternativas reais ainda não comparadas, `/discovery` antes da ADR. Discovery e ADR são etapas próprias: pausar o refino gravando o que já foi decidido e as lacunas restantes numa linha da entrada do dia em `docs/journal.md`, e sugerir `/clear` com a frase de retomada, que nomeia o refino de origem (ex.: "próximo passo: ADR Y, depois continue o refino de X"). Depois das saídas do discovery (ou da ADR), a `/refine` chamada de novo retoma das lacunas gravadas e segue para o Ready e o Fechamento.
 
 ## Ready
 

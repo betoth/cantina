@@ -13,6 +13,8 @@ Detalhar o caso de uso: **$ARGUMENTS**
 
 ## Preparação
 
+Documentos de `docs/` são lidos por seção: primeiro o índice de títulos (`grep -n '^#' <arquivo>`), depois só as seções ligadas ao tema. O documento inteiro só quando a tarefa o percorre todo (ex.: checagem de cobertura).
+
 1. Se `$ARGUMENTS` estiver vazio, usar o caso em discussão na conversa; se não estiver claro, perguntar qual e parar.
 2. Ler a linha do caso em `docs/use-cases.md`, `docs/domain.md`, `docs/non-functional-requirements.md` e as specs que já citam o caso.
 3. Ler o template [template.md](template.md).
