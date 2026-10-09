@@ -40,4 +40,4 @@ Para registrar as sessões, uma vez por máquina:
 1. `make tokencost`, que instala a CLI usada pelos hooks do Claude Code em `.claude/settings.json`. Sem a CLI, os hooks não fazem nada e não avisam, então `$(go env GOPATH)/bin` precisa estar no `PATH`.
 2. Aumentar `cleanupPeriodDays` em `~/.claude/settings.json` (o padrão é 30 dias), para os transcripts não serem apagados antes da coleta.
 
-`make costs` atualiza o CSV. As sessões de antes dos hooks são importadas com `go -C tools run ./tokencost collect -root "$PWD" -import-old`.
+`make costs` atualiza o CSV e os gráficos em [`docs/ai-costs.md`](docs/ai-costs.md). As sessões de antes dos hooks são importadas com `go -C tools run ./tokencost collect -root "$PWD" -import-old`.

@@ -135,9 +135,10 @@ Harness de IA:
 - [ ] Agent `test-designer`
 - [ ] `.claude/settings.json` com permissões (trava do agent `reviewer`)
 - [x] `tokencost`: coleta do custo de IA por issue *(não planejado)* ([#11](https://github.com/betoth/cantina/issues/11))
-- [ ] `tokencost`: relatório, comentário na issue e gráfico *(não planejado)* ([#12](https://github.com/betoth/cantina/issues/12))
+- [x] `tokencost`: relatório, comentário na issue e gráfico *(não planejado)* ([#12](https://github.com/betoth/cantina/issues/12))
 - [ ] Achados do `reviewer` corrigindo lacunas do harness (causa de cada achado, regra corrigida, registro no PR e no diário) *(não planejado)*
 - [ ] Discovery: redução do custo de tokens do Claude Code *(não planejado)*
+- [ ] `tokencost`: atribuir à issue o custo do refinamento feito na `main`, hoje somado em "sem issue" *(não planejado)*
 
 **Pronto quando:**
 

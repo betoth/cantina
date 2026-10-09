@@ -56,6 +56,7 @@ Chamado pela skill `/refine`, com o corpo da issue já aprovado pelo usuário.
   - Manual: o usuário executa o roteiro e informa o resultado; marcar o item e comentar na issue data, roteiro e resultado.
   - Falhou: comentar o que falhou na issue; card de volta para Em andamento.
   - Item de teste sem marcar: não seguir para o merge.
+- Custo de IA, antes do merge, na branch: `make costs` e `go -C tools run ./tokencost report -root "$PWD" -issue N -comment`, que cria ou atualiza o comentário de custo na issue. O `docs/ai-costs.csv` e o `docs/ai-costs.md` atualizados vão no PR, sem nova rodada de revisão (exceção do fluxo por tarefa no `CLAUDE.md`). O custo de depois desse passo só entra numa execução seguinte.
 - PR mergeado: confirmar que a issue fechou e o card está em Feito. Entrega com todas as sub-issues fechadas e checkbox ainda desmarcado no roadmap: marcar na próxima branch e avisar o usuário.
 - Entrega com issue que mudou de texto no roadmap: renomear a issue. Entrega removida: propor fechar a issue como não planejada.
 

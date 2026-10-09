@@ -3,6 +3,7 @@
 package main
 
 import (
+	"context"
 	"flag"
 	"fmt"
 	"io"
@@ -15,6 +16,8 @@ const usageText = `usage: tokencost <command> [flags]
 commands:
   record    register the transcript of a session (called by Claude Code hooks)
   collect   read registered transcripts and update the costs file
+  report    print the cost of an issue and its sub-issues, optionally as an issue comment
+  chart     write the cost charts to docs/ai-costs.md
 `
 
 func main() {
@@ -40,6 +43,10 @@ func run(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
 		return 0
 	case "collect":
 		return runCollect(args[1:], home, stdout, stderr)
+	case "report":
+		return runReport(args[1:], stdout, stderr)
+	case "chart":
+		return runChart(args[1:], stdout, stderr)
 	default:
 		fmt.Fprint(stderr, usageText)
 		return 2
@@ -89,5 +96,86 @@ func runCollect(args []string, home string, stdout, stderr io.Writer) int {
 		fmt.Fprintln(stderr, "warning:", w)
 	}
 	fmt.Fprintf(stdout, "%d new rows, %d updated rows, %d removed rows, %d warnings\n", res.New, res.Updated, res.Removed, len(res.Warnings))
+	return 0
+}
+
+// newGitHub is replaced in tests.
+var newGitHub = func(dir string) github { return ghCLI{dir: dir} }
+
+func runReport(args []string, stdout, stderr io.Writer) int {
+	fs := flag.NewFlagSet("report", flag.ContinueOnError)
+	fs.SetOutput(stderr)
+	root := fs.String("root", ".", "repository root")
+	costs := fs.String("costs", "", "costs file (default <root>/docs/ai-costs.csv)")
+	issue := fs.Int("issue", 0, "issue number")
+	post := fs.Bool("comment", false, "also create or update the cost comment on the issue")
+	if err := fs.Parse(args); err != nil {
+		return 2
+	}
+	if *issue <= 0 {
+		fmt.Fprintln(stderr, "tokencost report: -issue is required")
+		return 2
+	}
+	if *costs == "" {
+		*costs = filepath.Join(*root, "docs", "ai-costs.csv")
+	}
+	rows, err := readRows(*costs)
+	if err != nil {
+		fmt.Fprintln(stderr, "tokencost report:", err)
+		return 1
+	}
+	ctx := context.Background()
+	gh := newGitHub(*root)
+	body, treeErr := report(ctx, rows, *issue, gh)
+	fmt.Fprint(stdout, body)
+	if !*post {
+		if treeErr != nil {
+			fmt.Fprintln(stderr, "warning:", treeErr)
+		}
+		return 0
+	}
+	// A comment without the sub-issues would replace a complete one.
+	if treeErr != nil {
+		fmt.Fprintln(stderr, "tokencost report: comment not posted:", treeErr)
+		return 1
+	}
+	created, err := upsertComment(ctx, gh, *issue, body)
+	if err != nil {
+		fmt.Fprintln(stderr, "tokencost report:", err)
+		return 1
+	}
+	if created {
+		fmt.Fprintf(stderr, "comment created on #%d\n", *issue)
+	} else {
+		fmt.Fprintf(stderr, "comment updated on #%d\n", *issue)
+	}
+	return 0
+}
+
+func runChart(args []string, stdout, stderr io.Writer) int {
+	fs := flag.NewFlagSet("chart", flag.ContinueOnError)
+	fs.SetOutput(stderr)
+	root := fs.String("root", ".", "repository root")
+	costs := fs.String("costs", "", "costs file (default <root>/docs/ai-costs.csv)")
+	out := fs.String("out", "", "charts file (default <root>/docs/ai-costs.md)")
+	if err := fs.Parse(args); err != nil {
+		return 2
+	}
+	if *costs == "" {
+		*costs = filepath.Join(*root, "docs", "ai-costs.csv")
+	}
+	if *out == "" {
+		*out = filepath.Join(*root, "docs", "ai-costs.md")
+	}
+	rows, err := readRows(*costs)
+	if err != nil {
+		fmt.Fprintln(stderr, "tokencost chart:", err)
+		return 1
+	}
+	if err := os.WriteFile(*out, []byte(chart(rows)), 0o644); err != nil {
+		fmt.Fprintln(stderr, "tokencost chart:", err)
+		return 1
+	}
+	fmt.Fprintln(stdout, "wrote", *out)
 	return 0
 }
