@@ -13,6 +13,8 @@ Trabalhar na lista de casos de uso: **$ARGUMENTS**
 
 ## Preparação
 
+Documentos de `docs/` são lidos por seção: primeiro o índice de títulos (`grep -n '^#' <arquivo>`), depois só as seções ligadas ao tema. O documento inteiro só quando a tarefa o percorre todo (ex.: checagem de cobertura).
+
 1. Ler `docs/use-cases.md`, `docs/domain.md` e `docs/non-functional-requirements.md`.
 2. Se `docs/use-cases.md` não existir, criá-lo com: definição de caso de uso, onde fica o detalhe (`docs/use-cases/UC-ATOR-NN-nome.md`) e as specs, as regras abaixo, e as seções `## MVP` e `## v2`, cada uma com uma tabela `ID | Caso de uso` por ator.
 

@@ -15,6 +15,8 @@ ADRs são trabalho pareado: você propõe, o usuário revisa e decide.
 
 ## Preparação
 
+Documentos de `docs/` são lidos por seção: primeiro o índice de títulos (`grep -n '^#' <arquivo>`), depois só as seções ligadas ao tema. O documento inteiro só quando a tarefa o percorre todo (ex.: checagem de cobertura).
+
 1. Se `$ARGUMENTS` estiver vazio, usar a decisão em discussão na conversa; se não estiver clara, perguntar qual e parar.
 2. Ler:
    - o template [template.md](template.md);

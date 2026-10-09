@@ -16,8 +16,11 @@ O discovery prepara decisões; não decide. Trabalho pareado: você pesquisa e p
 - Uma pergunta por vez. Esperar a resposta antes da próxima.
 - Mensagens curtas: no chat, só a pergunta em discussão; o texto completo fica no arquivo.
 - Pesquisar em fontes reais (documentação oficial, código, artigos com medição) antes de afirmar como o mercado faz. Na dúvida, buscar.
+- Pesquisa web delegada a um subagent (`general-purpose`), que devolve só os fatos com a fonte de cada um. A página inteira não entra no contexto principal.
 
 ## Preparação
+
+Documentos de `docs/` são lidos por seção: primeiro o índice de títulos (`grep -n '^#' <arquivo>`), depois só as seções ligadas ao tema. O documento inteiro só quando a tarefa o percorre todo (ex.: checagem de cobertura).
 
 1. Se `$ARGUMENTS` estiver vazio, usar o tema em discussão na conversa; se não estiver claro, perguntar qual e parar.
 2. Ler:

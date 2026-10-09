@@ -31,7 +31,7 @@ Diagrama de containers: [docs/architecture.md](docs/architecture.md).
 
 Do plano ao código, cada nível detalha o anterior:
 
-1. **Entrega** no [roadmap](docs/roadmap.md), que é o backlog. O refinamento começa pela skill `/refine`, que conduz os passos seguintes.
+1. **Entrega** no [roadmap](docs/roadmap.md), que é o backlog. O refinamento começa pela skill `/refine`, que indica os passos seguintes, um por sessão.
 2. **Caso de uso** detalhado em `docs/use-cases/`, pela skill `/use-case`, quando a entrega for um caso de uso. Lista as specs que o implementam.
 3. **Discovery** (condicional) em `docs/discovery/`, pela skill `/discovery`, quando houver decisão cara de reverter com alternativas reais: compara as opções e recomenda. Não detalha o nível anterior, prepara as decisões dos seguintes; também antecede ADR de item de harness ou técnico, sem spec. As decisões saem:
    - nas ADRs;
@@ -39,6 +39,8 @@ Do plano ao código, cada nível detalha o anterior:
    - na spec.
 4. **Spec** em `docs/specs/`, pela skill `/spec` (template em [.claude/skills/spec/template.md](.claude/skills/spec/template.md)): critérios de aceite numerados e testáveis, e as tarefas de implementação. Item de harness ou técnico não tem spec: o escopo fica no corpo da issue.
 5. **Issues** criadas já prontas para começar, pela skill `/cards`, no [quadro](https://github.com/users/betoth/projects/1).
+
+Cada etapa (caso de uso, discovery, ADR, spec e o refino de item de harness ou técnico) roda numa sessão própria, pela seção Sessões. Num refino com etapas em várias sessões, cada sessão chama a `/refine` de novo, que segue do ponto em que parou. O cadastro fecha o refino: no item de harness ou técnico, depois do Ready; no caso de uso, quando a última spec é aprovada.
 
 ## Fluxo por tarefa
 
@@ -51,17 +53,50 @@ Do plano ao código, cada nível detalha o anterior:
 7. **Revisão** pelo agent `reviewer`, sobre a branch. Bloqueante: corrigir (pelo modo da tarefa) ou o dono descarta com motivo. Sugestão não aplicada: o dono confirma se segue com ela pendente. Depois de corrigir bloqueante, nova rodada; só bloqueante obriga outra rodada. Se ainda houver bloqueante após a terceira rodada, parar e pedir ao dono para decidir. Mudança depois do PR aberto: nova rodada e seção `## Review` do PR atualizada, exceto quando muda só `docs/ai-costs.csv` e `docs/ai-costs.md` (custo de IA).
 8. **PR** e testes do card, pela skill `/cards`.
 
+Cada tarefa roda numa sessão própria, pela seção Sessões.
+
 Pronto = `make check` verde + diário e roadmap atualizados + revisão sem bloqueante pendente + testes do card marcados (pela regra da skill `/cards`).
 
 ## Divisão do trabalho
 
-| Modo | Tarefas | Papel do Claude |
-|---|---|---|
-| Manual | núcleo do domínio e regras de negócio; código cuja correção depende de concorrência, transação ou consistência entre sistemas; invariantes; primeira implementação de cada padrão novo | **Não escreve código de produção.** Testes são escritos em par. Explica conceitos, revisa, aponta bugs e faz perguntas. |
-| Pareado | integrações com sistemas externos; novas instâncias de padrões já implementados manualmente; specs, ADRs e documentação | Propõe e escreve junto; o dono revisa e decide. |
-| Delegado | boilerplate; infraestrutura e configuração (build, CI, containers); ferramentas de apoio (simuladores, script de dados de demo, dados de teste); dashboards | Faz, verifica e reporta. |
+| Modo | Tarefas | Papel do Claude | Modelo |
+|---|---|---|---|
+| Manual | núcleo do domínio e regras de negócio; código cuja correção depende de concorrência, transação ou consistência entre sistemas; invariantes; primeira implementação de cada padrão novo | **Não escreve código de produção.** Testes são escritos em par. Explica conceitos, revisa, aponta bugs e faz perguntas. | Opus |
+| Pareado | integrações com sistemas externos; novas instâncias de padrões já implementados manualmente; specs, ADRs e documentação | Propõe e escreve junto; o dono revisa e decide. | Opus |
+| Delegado | boilerplate; infraestrutura e configuração (build, CI, containers); ferramentas de apoio (simuladores, script de dados de demo, dados de teste); dashboards | Faz, verifica e reporta. | Sonnet |
 
 Na dúvida sobre o modo de uma tarefa, perguntar antes de escrever código.
+
+O modelo é escolhido no início da sessão (`/model sonnet` ou `/model opus`) e não muda no meio, porque a troca descarta o cache. Na dúvida sobre o modo, Opus. Ao identificar o modo da tarefa, o Claude avisa se o modelo ativo não é o da tabela.
+
+## Sessões
+
+- Uma sessão por etapa do fluxo. O estado passa de uma sessão para a próxima pelos documentos e pela issue, não pela conversa.
+- Ao fechar uma etapa, o Claude sugere `/clear` e dá a frase de retomada (ex.: "continue a issue #16, próximo passo: skills"). Etapa fechada:
+  - documento da etapa (caso de uso, discovery, ADR, spec) revisado e gravado; na última spec de um caso de uso, só depois do cadastro das issues;
+  - issue cadastrada;
+  - PR aberto.
+- Antes de sugerir o `/clear`, o que a próxima sessão precisa saber já está gravado (checkbox da issue, documento, diário).
+- O hook `SessionStart` de retomada (`.claude/hooks/resume.sh`) injeta a branch, a issue e os passos abertos; "continue" basta. Na `main` ou em branch sem issue, o hook não acha a issue, e a frase de retomada completa é a que vale.
+
+## Interação
+
+- O passo seguinte do fluxo documentado é executado sem pedir confirmação.
+- Sempre perguntar antes de:
+  - decisão de domínio ou de arquitetura;
+  - ação externa ou irreversível (push, PR, issue, card);
+  - mudança de escopo;
+  - checkpoint.
+- Perguntas fechadas e independentes vão juntas num só `AskUserQuestion`. Perguntas abertas e de discussão, uma por vez.
+
+## Instruções de compactação
+
+Ao compactar, preservar:
+
+- arquivos alterados na sessão;
+- achados da revisão e o que foi feito com cada um;
+- decisões tomadas e o motivo;
+- issue e passo em andamento.
 
 ## Harness
 

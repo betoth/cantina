@@ -2,6 +2,7 @@
 name: roadmap
 description: Cria ou atualiza docs/roadmap.md (fases, entregas, requisitos por fase, critério de pronto) e verifica cobertura de casos de uso e requisitos, em par com o usuário. Usar ao planejar ou replanejar fases, ao concluir entregas, ou para checar se algo ficou sem fase.
 argument-hint: <fase ou ação, opcional>
+effort: low
 ---
 
 Trabalhar no roadmap: **$ARGUMENTS**
@@ -12,6 +13,8 @@ Trabalhar no roadmap: **$ARGUMENTS**
 - Mensagens curtas. Nada de blocos de texto grandes: no chat, mostrar uma fase por vez.
 
 ## Preparação
+
+Documentos de `docs/` são lidos por seção: primeiro o índice de títulos (`grep -n '^#' <arquivo>`), depois só as seções ligadas ao tema. O documento inteiro só quando a tarefa o percorre todo (ex.: checagem de cobertura).
 
 1. Ler `docs/roadmap.md` (se existir), `docs/use-cases.md`, `docs/non-functional-requirements.md`, `docs/domain.md` e as ADRs.
 2. Se o arquivo não existir: propor primeiro só a estrutura macro (fases, tema, por que nessa ordem) e esperar aprovação; depois detalhar fase por fase.

@@ -13,6 +13,8 @@ Trabalhar no domínio. Tema: **$ARGUMENTS**
 
 ## Preparação
 
+Documentos de `docs/` são lidos por seção: primeiro o índice de títulos (`grep -n '^#' <arquivo>`), depois só as seções ligadas ao tema. O documento inteiro só quando a tarefa o percorre todo (ex.: checagem de cobertura).
+
 1. Ler:
    - `docs/domain.md` (se existir);
    - `docs/use-cases.md`;

@@ -2,6 +2,7 @@
 name: journal
 description: Registra a entrada do dia no diário pessoal do projeto em docs/journal.md (feito, decisões e mudanças de ideia, aprendizados e revisões, dúvidas abertas). Usar ao concluir uma tarefa ou ao encerrar uma sessão de trabalho.
 argument-hint: <assunto da entrada, opcional>
+effort: low
 ---
 
 Registrar a entrada do diário. Assunto: **$ARGUMENTS**
@@ -13,7 +14,7 @@ Registrar a entrada do diário. Assunto: **$ARGUMENTS**
 
 ## Preparação
 
-1. Ler `docs/journal.md` para seguir o formato e saber onde parou a última entrada.
+1. Ler só as duas últimas entradas de `docs/journal.md` (`grep -n '^## ' docs/journal.md | tail -n 2` dá a linha de início) para seguir o formato e saber onde parou.
 2. Levantar o que mudou desde a última entrada: a conversa atual, `git status` e `git log` desde a data da última entrada.
 3. Se `$ARGUMENTS` estiver vazio, deduzir o assunto da tarefa da conversa.
 

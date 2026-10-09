@@ -14,6 +14,8 @@ Trabalhar nos requisitos não funcionais. Grupo: **$ARGUMENTS**
 
 ## Preparação
 
+Documentos de `docs/` são lidos por seção: primeiro o índice de títulos (`grep -n '^#' <arquivo>`), depois só as seções ligadas ao tema. O documento inteiro só quando a tarefa o percorre todo (ex.: checagem de cobertura).
+
 1. Ler `docs/non-functional-requirements.md` (se existir), `docs/domain.md`, `docs/use-cases.md` e as ADRs.
 2. Se o arquivo não existir, criá-lo com a introdução (metas declaradas e testáveis; regras de ID) e percorrer os grupos abaixo em ordem.
 

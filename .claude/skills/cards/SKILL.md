@@ -24,6 +24,8 @@ Cards do roadmap: **$ARGUMENTS**
 
 ## Preparação
 
+Documentos de `docs/` são lidos por seção: primeiro o índice de títulos (`grep -n '^#' <arquivo>`), depois só as seções ligadas ao tema. O documento inteiro só quando a tarefa o percorre todo (ex.: checagem de cobertura).
+
 1. Ler `docs/roadmap.md`, o [template](template.md) e a tabela de modos do `CLAUDE.md`.
 2. `gh auth status`: precisa do escopo `project`. Sem ele, pedir ao usuário `! gh auth refresh -s project` e parar.
 3. Se o quadro não existir (`gh project list --owner betoth`): propor criá-lo com o campo Status acima, ligado ao repositório. Automações e visão de quadro não têm API: passar ao usuário os passos na interface.
