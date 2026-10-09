@@ -10,9 +10,9 @@ Dados até 2026-10-09.
 ```mermaid
 xychart-beta
     title "Custo por issue (US$)"
-    x-axis ["sem issue", "#2", "#3", "#6", "#7", "#11", "#12"]
+    x-axis ["sem issue", "#2", "#3", "#6", "#7", "#9", "#11", "#12"]
     y-axis "US$"
-    bar [51.7213, 5.0819, 2.0224, 19.8174, 4.4679, 9.1305, 2.8373]
+    bar [52.1946, 5.0819, 2.0224, 19.8174, 4.4679, 2.2922, 9.1305, 3.3871]
 ```
 
 ## Custo acumulado por semana
@@ -22,5 +22,5 @@ xychart-beta
     title "Custo acumulado por semana (US$)"
     x-axis ["2026-10-05"]
     y-axis "US$"
-    line [95.0787]
+    line [98.3940]
 ```

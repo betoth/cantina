@@ -30,7 +30,7 @@ flowchart LR
     C --> R{Revisão sem bloqueante?}
     R -- não --> C
     R -- sim --> D[PR com Closes #N]
-    D --> E{CI verde e testes do card marcados?}
+    D --> E{"CI verde e testes do card marcados (regra da /cards)?"}
     E -- não --> C
     E -- sim --> F[Squash na main]
     F --> G[Issue fechada, card em Feito, branch apagada]

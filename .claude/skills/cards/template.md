@@ -46,10 +46,11 @@ Só em issue sem spec (harness, técnico). Com spec, ela está nas Referências.
 
 - [ ] (automático) comportamento verificado: `TestNome`
 - [ ] (manual) roteiro: o que executar e o que deve ser observado
+- [ ] (manual, depois do merge) roteiro que só se observa depois do merge
 
 ## Pronto quando
 
-- Todos os testes acima marcados, antes do merge.
+- Todos os testes acima marcados antes do merge, exceto os `(manual, depois do merge)`, marcados no passo PR mergeado da skill `/cards`.
 - Revisão sem bloqueante pendente.
 - Atende o critério de pronto N da fase.
 
