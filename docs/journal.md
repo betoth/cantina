@@ -105,7 +105,9 @@ Testei usando a skill para adaptar o discovery do ledger ao template e aprofunda
 
 Refinei a medição do custo de IA a partir de uma especificação que eu tinha escrito, e ela virou duas issues: a coleta ([#11](https://github.com/betoth/cantina/issues/11)) e a saída, com relatório, comentário na issue e gráfico ([#12](https://github.com/betoth/cantina/issues/12)).
 
-Implementei a coleta: o CLI `tokencost` em `tools/`, chamado pelos hooks de início e fim de sessão, lê os transcripts locais do Claude Code e grava em `docs/ai-costs.csv` os tokens e o custo por sessão, issue e modelo. Só números saem da máquina. A primeira coleta importou as sessões anteriores do projeto.
+Implementei a coleta ([#13](https://github.com/betoth/cantina/pull/13)): o CLI `tokencost` em `tools/`, chamado pelos hooks de início e fim de sessão, lê os transcripts locais do Claude Code e grava em `docs/ai-costs.csv` os tokens e o custo por sessão, issue e modelo. Só números saem da máquina. A primeira coleta importou as sessões anteriores do projeto.
+
+Implementei a saída ([#12](https://github.com/betoth/cantina/issues/12)): o `report` mostra o custo de uma issue e das sub-issues e publica um comentário na issue, que é atualizado em vez de duplicado; o `chart` gera o `docs/ai-costs.md` com o custo por issue e o acumulado por semana. A #11 já tem o [comentário de custo](https://github.com/betoth/cantina/issues/11#issuecomment-6077889328).
 
 ### Decisões
 
@@ -115,6 +117,10 @@ Implementei a coleta: o CLI `tokencost` em `tools/`, chamado pelos hooks de iní
 - A tabela de preços foi preenchida na implementação, a partir da tabela oficial, e não deixada zerada para depois: com o custo congelado, uma coleta com preço zero ficaria errada para sempre.
 - Na saída (#12), em vez de repetir o gráfico nos dois READMEs, um `docs/ai-costs.md` único referenciado pelos dois, e o custo de cada sub-issue somado ao da issue mãe.
 - O passo de build da #11 passou a valer só para `tools/`: a raiz ainda não tem pacotes Go e fica sem verificação até o alvo `check` do Makefile, que tem item próprio no roadmap.
+- A revisão da #11 levou três rodadas, e metade dos achados eram lacunas do harness, não do código: o `reviewer` revisou sem ler a issue, e o refinamento aprovou um comando de verificação que nunca tinha rodado. Em vez de só corrigir cada achado, coloquei no roadmap um item para cada achado apontar a regra que o teria evitado.
+- No refinamento da #12, o `overhead` entra como linha própria no relatório e no custo de cada issue no gráfico; o comentário de custo passou a fazer parte do fluxo do `/cards`, antes do merge; e o gráfico mostra "dados até" pelo CSV, não a hora da execução, para o arquivo só mudar quando os dados mudam.
+- Sem o `gh`, o `report` mostra só o custo da própria issue, como a #12 pedia. Com `-comment`, mudei de ideia na revisão: ele não publica e sai com erro, para não trocar um comentário completo, com as sub-issues, por um parcial.
+- O custo da #11 saiu em US$ 9,13, mas é um piso: a sessão que fechei sem querer não gravou o `cost-state` e perdeu o `overhead`, e o refinamento feito na `main` caiu em "sem issue". Atribuir esse custo à issue ficou como item no roadmap, junto com um discovery para reduzir o custo de tokens.
 
 ### Aprendizados e revisões
 
