@@ -38,6 +38,13 @@ A issue está pronta quando tem:
 
 - Escopo (ou spec aprovada nas Referências) com o que entra e o que não entra.
 - Testes concretos, cada um automático ou manual, com o que observar.
+  - Automático por padrão.
+  - Manual só com ganho sobre o automático: o comportamento depende de algo que o teste não alcança (render no GitHub, serviço externo real, automação do quadro) ou exige o olho do dono.
+  - Eficientes:
+    - cada teste cobre um critério que nenhum outro cobre;
+    - o manual não repete o que um automático já verifica;
+    - o roteiro manual é curto, com o comando exato e o que observar.
+  - Manual que só se observa depois do merge: marcado `(manual, depois do merge)`.
 - Pronto quando, citando o critério de pronto da fase que atende, se houver.
 - Labels de tipo e de modo e milestone da fase.
 

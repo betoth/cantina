@@ -139,6 +139,7 @@ Harness de IA:
 - [ ] Achados do `reviewer` corrigindo lacunas do harness (causa de cada achado, regra corrigida, registro no PR e no diário) *(não planejado)*
 - [ ] Discovery: redução do custo de tokens do Claude Code *(não planejado)*
 - [ ] `tokencost`: atribuir à issue o custo do refinamento feito na `main`, hoje somado em "sem issue" *(não planejado)*
+- [x] Skill `/cards`: conferir o card depois das automações do quadro *(não planejado)* ([#9](https://github.com/betoth/cantina/issues/9))
 
 **Pronto quando:**
 

@@ -51,7 +51,7 @@ Do plano ao código, cada nível detalha o anterior:
 7. **Revisão** pelo agent `reviewer`, sobre a branch. Bloqueante: corrigir (pelo modo da tarefa) ou o dono descarta com motivo. Sugestão não aplicada: o dono confirma se segue com ela pendente. Depois de corrigir bloqueante, nova rodada; só bloqueante obriga outra rodada. Se ainda houver bloqueante após a terceira rodada, parar e pedir ao dono para decidir. Mudança depois do PR aberto: nova rodada e seção `## Review` do PR atualizada, exceto quando muda só `docs/ai-costs.csv` e `docs/ai-costs.md` (custo de IA).
 8. **PR** e testes do card, pela skill `/cards`.
 
-Pronto = `make check` verde + diário e roadmap atualizados + revisão sem bloqueante pendente + testes do card marcados.
+Pronto = `make check` verde + diário e roadmap atualizados + revisão sem bloqueante pendente + testes do card marcados (pela regra da skill `/cards`).
 
 ## Divisão do trabalho
 
