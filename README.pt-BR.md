@@ -30,3 +30,14 @@ Sem front-end: a interface é a API HTTP (OpenAPI), uma CLI de caixa e simulador
 | OpenTelemetry + Collector | instrumentação independente de fornecedor; backends (Jaeger, Prometheus) trocados pela configuração do Collector |
 | golangci-lint | conjunto de linters padrão em Go; binário oficial |
 | `tools/go.mod` | ferramentas Go versionadas sem misturar dependências com as da aplicação |
+
+## Custo de IA
+
+O custo de tokens do Claude Code é medido por issue e guardado em [`docs/ai-costs.csv`](docs/ai-costs.csv), só com números (sem conteúdo das conversas). A issue vem do nome da branch (`feat/42-...` conta para a #42).
+
+Para registrar as sessões, uma vez por máquina:
+
+1. `make tokencost`, que instala a CLI usada pelos hooks do Claude Code em `.claude/settings.json`. Sem a CLI, os hooks não fazem nada e não avisam, então `$(go env GOPATH)/bin` precisa estar no `PATH`.
+2. Aumentar `cleanupPeriodDays` em `~/.claude/settings.json` (o padrão é 30 dias), para os transcripts não serem apagados antes da coleta.
+
+`make costs` atualiza o CSV. As sessões de antes dos hooks são importadas com `go -C tools run ./tokencost collect -root "$PWD" -import-old`.

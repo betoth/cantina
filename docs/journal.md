@@ -98,3 +98,25 @@ Testei usando a skill para adaptar o discovery do ledger ao template e aprofunda
 - Update condicional em `READ COMMITTED`: o segundo `UPDATE` espera o primeiro e reavalia o `WHERE` com o saldo novo; a recusa por saldo vira "0 linhas", não erro.
 - Toda garantia sob concorrência tem que estar na escrita. Uma leitura antes da escrita deixa uma janela aberta.
 - Deadlock se evita travando as linhas sempre na mesma ordem, em todos os fluxos.
+
+## 2026-10-09 · Fase 1: custo de IA por issue (tokencost)
+
+### Feito
+
+Refinei a medição do custo de IA a partir de uma especificação que eu tinha escrito, e ela virou duas issues: a coleta ([#11](https://github.com/betoth/cantina/issues/11)) e a saída, com relatório, comentário na issue e gráfico ([#12](https://github.com/betoth/cantina/issues/12)).
+
+Implementei a coleta: o CLI `tokencost` em `tools/`, chamado pelos hooks de início e fim de sessão, lê os transcripts locais do Claude Code e grava em `docs/ai-costs.csv` os tokens e o custo por sessão, issue e modelo. Só números saem da máquina. A primeira coleta importou as sessões anteriores do projeto.
+
+### Decisões
+
+- A escrita no cache ficou separada por TTL (5 min e 1 h). Com um preço único, as escritas de 1 h sairiam cerca de 37% mais baratas ou as de 5 min 60% mais caras, e a escrita no cache pesa muito no custo das sessões.
+- O custo é gravado no momento da coleta e nunca recalculado. Se o preço mudar, o que já está gravado fica; tokens novos de uma linha usam o preço novo. Basta ser aproximado o bastante para fazer sentido.
+- O transcript não registra todas as chamadas (Haiku em segundo plano e parte das do modelo principal, de 5% a 12% do custo). Entre ficar com um piso e complementar pelo `cost-state` que o Claude Code grava no fim da sessão, fiquei com o complemento: a diferença vira linhas `overhead`, divididas entre as issues na proporção do custo de cada uma.
+- A tabela de preços foi preenchida na implementação, a partir da tabela oficial, e não deixada zerada para depois: com o custo congelado, uma coleta com preço zero ficaria errada para sempre.
+- Na saída (#12), em vez de repetir o gráfico nos dois READMEs, um `docs/ai-costs.md` único referenciado pelos dois, e o custo de cada sub-issue somado ao da issue mãe.
+- O passo de build da #11 passou a valer só para `tools/`: a raiz ainda não tem pacotes Go e fica sem verificação até o alvo `check` do Makefile, que tem item próprio no roadmap.
+
+### Aprendizados e revisões
+
+- O cache de prompt tem dois TTLs com preços diferentes: a escrita de 5 min custa 1,25× a entrada, a de 1 h, 2×.
+- O transcript do Claude Code não é a conta completa: o total real da sessão só aparece no `cost-state`, e só quando a sessão termina normalmente.

@@ -1,0 +1,10 @@
+{
+  "hooks": {
+    "SessionStart": [
+      { "hooks": [{ "type": "command", "command": "command -v tokencost >/dev/null && tokencost record || true" }] }
+    ],
+    "SessionEnd": [
+      { "hooks": [{ "type": "command", "command": "command -v tokencost >/dev/null && tokencost record || true" }] }
+    ]
+  }
+}

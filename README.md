@@ -32,3 +32,14 @@ Detailed documentation is written in Portuguese.
 | OpenTelemetry + Collector | vendor-neutral instrumentation; backends (Jaeger, Prometheus) swapped by Collector config |
 | golangci-lint | standard Go linter suite; official binary |
 | `tools/go.mod` | versioned Go tools without mixing their dependencies into the application's |
+
+## AI cost
+
+Claude Code token cost is measured per issue and stored in [`docs/ai-costs.csv`](docs/ai-costs.csv), as numbers only (no conversation content). The issue comes from the branch name (`feat/42-...` counts toward #42).
+
+To record sessions, once per machine:
+
+1. `make tokencost`, which installs the CLI used by the Claude Code hooks in `.claude/settings.json`. The hooks skip silently when the CLI is not found, so `$(go env GOPATH)/bin` must be in the `PATH`.
+2. Raise `cleanupPeriodDays` in `~/.claude/settings.json` (default is 30 days), so transcripts are not deleted before collection.
+
+`make costs` updates the CSV. Sessions from before the hooks are imported with `go -C tools run ./tokencost collect -root "$PWD" -import-old`.
