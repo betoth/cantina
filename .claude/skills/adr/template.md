@@ -1,38 +1,18 @@
 # NNNN. Título curto da decisão
 
-- Status: proposta | aceita | substituída por [NNNN](NNNN-titulo.md) | descontinuada
+- Status: proposta | aceita | substituída por NNNN (com link para a ADR) | descontinuada
 - Data: AAAA-MM-DD
 
-## Contexto e problema
-
-Qual problema precisa ser resolvido e por que agora. Duas a quatro frases.
-
-## Fatores de decisão
-
-- O que pesou na escolha (ex.: simplicidade, reconhecimento de mercado, desempenho, custo de manutenção).
+Contexto, decisão e porquê, em 1 a 3 frases.
 
 ## Opções consideradas
 
-- Opção A
-- Opção B
+Opcional. Só as discutidas de fato, cada uma com o motivo de não ter sido escolhida e a fonte.
 
-## Decisão
-
-Escolhida: **Opção A**, porque ...
+- Opção B: ...
 
 ## Consequências
 
-- Positivas: ...
-- Negativas: ...
+Opcional. O que fica mais fácil e o que fica mais difícil.
 
-## Prós e contras das opções
-
-### Opção A
-
-- Prós: ...
-- Contras: ...
-
-### Opção B
-
-- Prós: ...
-- Contras: ...
+- ...

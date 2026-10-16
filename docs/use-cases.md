@@ -2,8 +2,8 @@
 
 Caso de uso é o objetivo de um ator, de ponta a ponta, do ponto de vista dele. Ex.: "responsável recarrega a carteira do aluno" cobre gerar o Pix, pagar, ver o saldo e receber o aviso.
 
-- Detalhe de um caso (fluxo principal, fluxos alternativos, resultado, specs que o implementam): arquivo `use-cases/UC-ATOR-NN-nome.md`, criado quando o caso for detalhado. Nesta lista, o ID passa a ser link para ele.
-- Detalhe técnico, critérios de aceite e tarefas de implementação: specs em `specs/`, que citam os casos de uso que implementam. Um caso de uso pode ter várias specs; uma spec pode atender vários casos (ex.: a do ledger serve à compra, ao estorno e ao extrato). As tarefas viram issues no GitHub.
+- Detalhe de um caso (objetivo, fluxos, decisões): a issue do caso de uso no GitHub, criada no refino. Nesta lista, o ID passa a ser link para ela.
+- Critérios de aceite e tarefas de implementação: sub-issues da issue do caso, uma por fatia verificável sozinha. Base reaproveitada por vários casos (ex.: o ledger serve à compra, ao estorno e ao extrato) vira issue própria, ligada a todos.
 - Atores e termos: [domain.md](domain.md).
 - IDs no formato `UC-ATOR-NN`: o prefixo indica o ator (`USR` é comum a todo ator com login). O número não indica ordem de implementação; a ordem está no [roadmap](roadmap.md).
 

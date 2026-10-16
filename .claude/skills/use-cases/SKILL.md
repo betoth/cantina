@@ -8,7 +8,7 @@ Trabalhar na lista de casos de uso: **$ARGUMENTS**
 
 ## Forma de conduzir
 
-- Uma pergunta por vez. Esperar a resposta antes da próxima.
+- Perguntas fechadas e independentes juntas; abertas, uma por vez. Esperar a resposta antes de seguir.
 - Mensagens curtas. Nada de blocos de texto grandes: no chat, mostrar só o trecho em discussão; o texto completo fica no arquivo.
 
 ## Preparação
@@ -16,12 +16,12 @@ Trabalhar na lista de casos de uso: **$ARGUMENTS**
 Documentos de `docs/` são lidos por seção: primeiro o índice de títulos (`grep -n '^#' <arquivo>`), depois só as seções ligadas ao tema. O documento inteiro só quando a tarefa o percorre todo (ex.: checagem de cobertura).
 
 1. Ler `docs/use-cases.md`, `docs/domain.md` e `docs/non-functional-requirements.md`.
-2. Se `docs/use-cases.md` não existir, criá-lo com: definição de caso de uso, onde fica o detalhe (`docs/use-cases/UC-ATOR-NN-nome.md`) e as specs, as regras abaixo, e as seções `## MVP` e `## v2`, cada uma com uma tabela `ID | Caso de uso` por ator.
+2. Se `docs/use-cases.md` não existir, criá-lo com: definição de caso de uso, onde fica o detalhe (a issue do caso de uso, pela `/refine`), as regras abaixo, e as seções `## MVP` e `## v2`, cada uma com uma tabela `ID | Caso de uso` por ator.
 
 ## O que é caso de uso
 
 - Objetivo de um ator, de ponta a ponta, do ponto de vista dele.
-- Não é caso de uso: etapa interna de outro caso (ex.: webhook dentro da recarga), infraestrutura (ex.: outbox), regra de permissão (vai para o domínio), regra de negócio (vai para o domínio ou para a spec).
+- Não é caso de uso: etapa interna de outro caso (ex.: webhook dentro da recarga), infraestrutura (ex.: outbox), regra de permissão (vai para o domínio), regra de negócio (vai para o domínio ou para a issue do caso).
 - O que é comum a todo ator com login (ativar conta, recuperar senha, autenticar) fica no grupo `USR`.
 
 ## Regras de ID

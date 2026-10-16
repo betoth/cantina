@@ -153,3 +153,36 @@ Com os primeiros números do `tokencost`, fiz um discovery do custo de tokens ([
 - O transcript do Claude Code não é a conta completa: o total real da sessão só aparece no `cost-state`, e só quando a sessão termina normalmente.
 - O prefixo fixo é relido do cache a cada request, então cada 1 k tokens a mais pesa em toda a sessão. Mesmo assim, 2 k de prefixo valem pouco perto do contexto que cresce numa sessão longa.
 - A memória do projeto (`CLAUDE.md` com `conventions.md`) subiu de ~2,5 k para ~4,3 k tokens com as regras desta issue. Reduzir custo também acrescenta texto fixo.
+
+## 2026-10-15 · Fase 1: fluxo enxuto (refino numa sessão, issue no lugar da spec)
+
+### Feito
+
+O projeto tinha cerca de 4.150 linhas de docs e skills e nenhuma linha de Go de produção. Reestruturei o harness para um fluxo enxuto inspirado em mattpocock/skills ([#18](https://github.com/betoth/cantina/issues/18)): o refino roda numa sessão só, por grilling em rodadas, e o resultado vai para o corpo da issue (mãe do caso de uso e sub-issues por fatia vertical, com critérios `CA-NN` e "blocked by"). `/spec`, `/use-case` e `/discovery` saíram; entraram `/research` (sem arquivo), `/task` (execução da issue até o PR) e `/retro`.
+
+O `CLAUDE.md` caiu de 109 para 50 linhas, sem importar o `conventions.md`, e o harness ganhou o `docs/harness.md` e um teste em `tools/` que falha com link relativo quebrado.
+
+### Decisões
+
+- Interação ficou no `CLAUDE.md`, e não só na `/refine` como a issue previa: perguntar antes de ação externa vale em toda sessão.
+- Documentos descrevem o estado atual. Comecei querendo manter o histórico no roadmap com notas de "substituída por", mas mudei de ideia: o que mudou fica no diário, a versão antiga no git, e só o diário e os ADRs são registro.
+- Antes de fechar, pedi uma segunda pesquisa no repositório do Matt Pocock. Ela mostrou que eu tinha reproduzido o anti-padrão de escrever todos os testes antes do código: a `/task` passou a um ciclo por critério, com o seam decidido no refino. Também entraram:
+  - o `reviewer` em dois eixos (normas e issue);
+  - regras de fatiamento (o CA falha no commit de partida, cada fatia responde "o que demonstro?");
+  - a `/retro` nesta mesma issue.
+- Divergi da fonte num ponto: a `/task` continua lendo o `conventions.md` antes de implementar. São regras curtas, e lê-las antes evita rodadas de revisão.
+- O corpo do PR com evidência e risco do merge ficou como item próprio no roadmap.
+
+### Aprendizados e revisões
+
+- Spec costuma valer só até a entrega: depois, testes e código são a fonte da verdade, e o porquê fica nos ADRs e no glossário.
+- Escrever todos os testes antes do código é fatiamento horizontal: os testes verificam um comportamento imaginado. O ciclo é um critério, um teste vermelho e o código mínimo.
+- Manter histórico dentro de documento vivo não tem valor: o diário conta o que mudou, e o git guarda como era.
+- A primeira `/retro` sobre esta sessão virou sete correções no harness:
+  - correção de revisão em código segue o ciclo (teste vermelho antes), porque o panic do `linkcheck` com linha vazia só apareceu por sorte;
+  - correção que muda o que o diário afirma atualiza a entrada (o número de linhas do `CLAUDE.md` ficou falso depois da revisão);
+  - o `errorlint` entra no item do golangci-lint, porque o `os.IsNotExist` era erro mecânico;
+  - um check de enumeração encadeada vira item do roadmap;
+  - o `reviewer` busca por `git grep --untracked`, que também vê os arquivos novos (as ferramentas Grep e Glob não existem nesta instalação);
+  - a `/task` diz que `/checkpoint` e `/retro` só abrem quando o dono digita;
+  - o teste do `tools/` roda sem cache.

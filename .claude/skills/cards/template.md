@@ -10,8 +10,13 @@ Metadados:
 - Label de tipo: `caso-de-uso`, `rnf`, `técnico`, `adr`, `harness` ou `bug`.
 - Label de modo: `manual`, `pareado` ou `delegado`.
 - `não-planejado` quando o item entrou depois do roadmap validado.
+- Sub-issue: ligada à mãe e com as dependências pelo "blocked by" nativo do GitHub.
 
-Corpo:
+Corpo: as seções marcadas com um tipo só entram nas issues desse tipo.
+
+- Caso de uso: issue mãe.
+- Tarefa: sub-issue de caso de uso.
+- Harness ou técnico: issue única, também para RNF, ADR e bug.
 
 ```markdown
 ## Contexto
@@ -22,36 +27,84 @@ Por que esta entrega existe e onde se encaixa na fase. Uma a três frases.
 
 - Roadmap: [Fase N](https://github.com/betoth/cantina/blob/main/docs/roadmap.md#fase-n-tema)
 - Casos de uso / RNF: UC-ATOR-NN, RNF-GRUPO-NN
-- Spec: `docs/specs/NNNN-nome.md` (quando existir)
+- Issue mãe: #N (tarefa)
+- Domínio: seções do `docs/domain.md` que se aplicam (caso de uso, tarefa)
 - ADRs: (quando houver)
+
+## Objetivo
+
+Caso de uso. Como <ator>, quero <ação>, para que <benefício>.
+
+## Fluxos
+
+Caso de uso, resumidos.
+
+- Principal: ...
+- Alternativos e exceções:
+  - **<situação>:** o que acontece.
+
+## Decisões
+
+Caso de uso. Decisões do grilling que não viraram ADR, cada uma com o porquê.
+
+- ...
+
+## Tarefas
+
+Caso de uso. As sub-issues, na ordem de execução, com os critérios que cobrem.
+
+- [ ] #N Nome da fatia (CA-01, CA-02)
+
+## Fatia
+
+Tarefa. A fatia vertical (tracer bullet) que esta tarefa entrega, verificável sozinha. Uma a três frases.
+
+- Demonstração: o comportamento que se mostra quando ela estiver pronta.
+- Onde testar: o seam combinado no refino (ex.: porta do ledger, API HTTP).
+
+## Critérios de aceite
+
+Tarefa. Numerados na sequência do caso de uso; cada um vira ao menos um teste.
+
+- **CA-01.** **Dado** ..., **quando** ..., **então** ...
 
 ## Escopo
 
-Só em issue sem spec (harness, técnico). Com spec, ela está nas Referências.
+Harness ou técnico.
 
 - Entra: ...
 - Não entra: ...
 - Critérios: ...
+- Onde testar: o seam combinado no refino (técnico).
 
 ## Passos
 
-- [ ] Spec
-- [ ] Testes
-- [ ] Implementação
-- [ ] `make check` verde
+Tarefa, harness ou técnico.
+
+- [ ] Branch e card em Em andamento
+- [ ] Ciclo por critério (teste vermelho, código mínimo, repete)
+- [ ] Verificação (`make check` verde)
+- [ ] Checkpoint (perguntado ao dono)
 - [ ] Diário e roadmap
 - [ ] Revisão (agent `reviewer`)
+- [ ] Retro (perguntada ao dono)
+- [ ] PR
 
 ## Testes
 
-- [ ] (automático) comportamento verificado: `TestNome`
+Tarefa, harness ou técnico.
+
+- [ ] (automático) CA-01: comportamento verificado: `TestNome`
+- [ ] (automático) bug: teste que reproduz o defeito, vermelho antes da correção: `TestNome`
 - [ ] (manual) roteiro: o que executar e o que deve ser observado
 - [ ] (manual, depois do merge) roteiro que só se observa depois do merge
 
 ## Pronto quando
 
-- Todos os testes acima marcados antes do merge, exceto os `(manual, depois do merge)`, marcados no passo PR mergeado da skill `/cards`.
-- Revisão sem bloqueante pendente.
+- Caso de uso: todas as sub-issues fechadas.
+- Tarefa, harness ou técnico:
+  - todos os testes acima marcados antes do merge, exceto os `(manual, depois do merge)`, marcados no passo PR mergeado da skill `/cards`;
+  - revisão sem bloqueante pendente.
 - Atende o critério de pronto N da fase.
 
 ## Fora de escopo

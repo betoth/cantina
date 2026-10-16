@@ -1,6 +1,6 @@
 ---
 name: domain
-description: Cria ou atualiza docs/domain.md (visão, atores, glossário, contextos, regras de negócio, questões em aberto), em par com o usuário. Usar quando surgir ou mudar um conceito, regra ou ator do domínio, ou quando uma questão em aberto for respondida.
+description: Cria ou atualiza docs/domain.md (visão, atores, glossário, contextos, regras de negócio, questões em aberto), em par com o usuário. Usar quando surgir ou mudar um conceito, regra ou ator do domínio, ou quando uma questão em aberto for respondida, inclusive no meio do grilling da /refine.
 argument-hint: <tema, opcional>
 ---
 
@@ -8,7 +8,8 @@ Trabalhar no domínio. Tema: **$ARGUMENTS**
 
 ## Forma de conduzir
 
-- Uma pergunta por vez. Esperar a resposta antes da próxima.
+- Chamada no meio do grilling da `/refine`: atualizar o glossário ou a regra na hora, mostrar só o trecho alterado e voltar à rodada.
+- Fora do grilling, perguntas fechadas e independentes juntas; abertas, uma por vez.
 - Mensagens curtas. Nada de blocos de texto grandes: no chat, mostrar só o trecho em discussão; o texto completo fica no arquivo.
 
 ## Preparação
@@ -20,8 +21,7 @@ Documentos de `docs/` são lidos por seção: primeiro o índice de títulos (`g
    - `docs/use-cases.md`;
    - `docs/non-functional-requirements.md`;
    - `docs/conventions.md`;
-   - as ADRs;
-   - o discovery do tema em `docs/discovery/`, se existir.
+   - as ADRs.
 2. Se `$ARGUMENTS` estiver vazio, usar o tema em discussão na conversa. Se o arquivo não existir, criá-lo seguindo a estrutura abaixo, começando pela visão e pelos atores.
 
 ## Estrutura de `docs/domain.md`
@@ -39,7 +39,9 @@ Documentos de `docs/` são lidos por seção: primeiro o índice de títulos (`g
 - Sem duplicar outros documentos: o que cada ator faz fica nos casos de uso; metas de carga, privacidade etc. nos requisitos não funcionais; escolhas técnicas nas ADRs. Aqui, só link.
 - Questão de domínio que surgir em qualquer trabalho vem para "Questões em aberto".
 - Questão respondida: registrar a decisão na seção do tema e remover a questão da lista.
-- Termo novo no domínio entra no glossário antes de aparecer em spec ou código.
+- Termo novo no domínio entra no glossário antes de aparecer em issue ou código.
+- Termo usado na conversa que conflita com o glossário (sinônimo, sentido diferente): apontar e propor o termo canônico.
+- Confrontar o que o dono diz com o código existente e apontar quando divergem, antes de registrar a regra.
 
 ## Fechamento
 

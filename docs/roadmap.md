@@ -17,7 +17,7 @@ Casos de uso: [use-cases.md](use-cases.md). Requisitos não funcionais: [non-fun
 
 ## Fase 0: harness
 
-Base de conhecimento e de processo para a Fase 1 começar no fluxo spec → testes → implementação → verificação → diário. Infraestrutura de código nasce na Fase 1, quando for usada.
+Base de conhecimento e de processo para a Fase 1 começar no fluxo refino → testes → implementação → verificação → diário. Infraestrutura de código nasce na Fase 1, quando for usada.
 
 Documentação:
 
@@ -42,13 +42,11 @@ ADRs:
 Harness de IA:
 
 - [x] `CLAUDE.md`
-- [x] Skill `/spec` (com template)
 - [x] Skill `/adr` (com template)
 - [x] Skill `/journal`
 - [x] Skill `/checkpoint`
 - [x] Skill `/domain`
 - [x] Skill `/use-cases`
-- [x] Skill `/use-case` (com template de detalhe)
 - [x] Skill `/requirements`
 - [x] Skill `/conventions`
 - [x] Skill `/roadmap`
@@ -101,7 +99,7 @@ Técnico:
 - [ ] Migrations por módulo
 - [ ] `tools/go.mod` com goose e sqlc
 - [ ] Makefile com `check`
-- [ ] golangci-lint configurado
+- [ ] golangci-lint configurado, com `errorlint`, também no módulo `tools/`
 - [ ] `.editorconfig`
 - [ ] Compose com Postgres
 - [ ] `.env.example`
@@ -128,16 +126,20 @@ ADRs:
 
 Harness de IA:
 
-- [ ] Skill `/tests-from-spec`
+- [ ] Skill `/tests-from-issue`
 - [x] Skill `/refine` *(não planejado)* ([#3](https://github.com/betoth/cantina/issues/3))
 - [x] Agent `reviewer` ([#2](https://github.com/betoth/cantina/issues/2))
-- [x] Skill `/discovery` *(não planejado)* ([#7](https://github.com/betoth/cantina/issues/7))
+- [x] Skill `/research` *(não planejado)* ([#18](https://github.com/betoth/cantina/issues/18))
 - [ ] Agent `test-designer`
 - [ ] `.claude/settings.json` com permissões (trava do agent `reviewer`)
 - [x] `tokencost`: coleta do custo de IA por issue *(não planejado)* ([#11](https://github.com/betoth/cantina/issues/11))
 - [x] `tokencost`: relatório, comentário na issue e gráfico *(não planejado)* ([#12](https://github.com/betoth/cantina/issues/12))
-- [ ] Achados do `reviewer` corrigindo lacunas do harness (causa de cada achado, regra corrigida, registro no PR e no diário) *(não planejado)*
+- [x] Achados do `reviewer` corrigindo lacunas do harness (causa de cada achado, regra corrigida, registro no PR e no diário), pela skill `/retro` *(não planejado)* ([#18](https://github.com/betoth/cantina/issues/18))
 - [x] Redução do custo de tokens do Claude Code: discovery e aplicação *(não planejado)* ([#16](https://github.com/betoth/cantina/issues/16))
+- [x] Fluxo enxuto: refino numa sessão com grilling e issue no lugar da spec, skills `/task` e `/retro`, `CLAUDE.md` mínimo e check de links *(não planejado)* ([#18](https://github.com/betoth/cantina/issues/18))
+- [ ] Corpo do PR com evidência (antes e depois) e risco do merge (reversível ou não, alcance) *(não planejado)*
+- [ ] `tokencost` sem ritual por PR: coleta automática mantida, comentário na issue, CSV e gráfico só no fechamento de fase ou para um experimento *(não planejado)*
+- [ ] Check de documentação em `tools/`: enumeração encadeada com `; ` em linha de prosa *(não planejado)*
 - [ ] `tokencost`: atribuir à issue o custo do refinamento feito na `main`, hoje somado em "sem issue" *(não planejado)*
 - [x] Skill `/cards`: conferir o card depois das automações do quadro *(não planejado)* ([#9](https://github.com/betoth/cantina/issues/9))
 

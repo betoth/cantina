@@ -11,7 +11,7 @@ No recreio, dois caixas podem debitar a mesma carteira no mesmo instante, e toda
 - como tratar as contas que entram em quase toda transação;
 - o que acontece quando uma transação falha por motivo transitório.
 
-A análise completa está no [discovery do ledger](../discovery/ledger.md), perguntas 2, 3 e 12.
+A análise completa está no [discovery do ledger](https://github.com/betoth/cantina/blob/4f44909e997569da5494cacf44bcab5ba2b5022c/docs/discovery/ledger.md), perguntas 2, 3 e 12.
 
 ## Fatores de decisão
 

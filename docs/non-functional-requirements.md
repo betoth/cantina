@@ -2,7 +2,7 @@
 
 Metas declaradas e testáveis. Valores escolhidos para exercitar o sistema além do uso real de uma escola, não medidos em produção.
 
-IDs no formato `RNF-GRUPO-NN`, citados no [roadmap](roadmap.md) e nas specs. A fase em que cada requisito é entregue está no roadmap.
+IDs no formato `RNF-GRUPO-NN`, citados no [roadmap](roadmap.md) e nas issues. A fase em que cada requisito é entregue está no roadmap.
 
 ## Carga e latência
 

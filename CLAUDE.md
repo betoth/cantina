@@ -2,108 +2,49 @@
 
 Backend de cantina escolar pré-paga em Go: carteira do aluno, recarga via Pix (fake), regras dos responsáveis, compra autorizada contra saldo e regras, ledger append-only em partida dobrada. Projeto de portfólio; o objetivo é o dono do repo dominar cada decisão e cada linha crítica.
 
-- Domínio, glossário, invariantes do ledger e questões em aberto: [docs/domain.md](docs/domain.md)
-- Casos de uso (IDs UC-ATOR-NN citados em specs e roadmap): [docs/use-cases.md](docs/use-cases.md)
-- Requisitos não funcionais (IDs RNF-GRUPO-NN citados em specs e roadmap): [docs/non-functional-requirements.md](docs/non-functional-requirements.md)
-- Pesquisas de mercado e comparação de opções antes das decisões: `docs/discovery/` (criada com o primeiro discovery)
-- Decisões de arquitetura: [docs/adr/](docs/adr/)
-- Specs de funcionalidades: `docs/specs/` (criada com a primeira spec)
-- Diário: [docs/journal.md](docs/journal.md)
-- Plano e status por fase: [docs/roadmap.md](docs/roadmap.md)
-- Execução: issues no [quadro do GitHub Projects](https://github.com/users/betoth/projects/1), uma milestone por fase
+- Domínio, glossário e invariantes do ledger: [docs/domain.md](docs/domain.md)
+- Casos de uso (UC-ATOR-NN) e requisitos não funcionais (RNF-GRUPO-NN): [docs/use-cases.md](docs/use-cases.md), [docs/non-functional-requirements.md](docs/non-functional-requirements.md)
+- Decisões de arquitetura: [docs/adr/](docs/adr/); convenções: [docs/conventions.md](docs/conventions.md); harness: [docs/harness.md](docs/harness.md)
+- Plano e diário: [docs/roadmap.md](docs/roadmap.md), [docs/journal.md](docs/journal.md); execução no [quadro](https://github.com/users/betoth/projects/1)
+- Fluxo: refino pela skill `/refine` (issue Ready, numa sessão), execução pela `/task` (uma sessão por issue)
 
 ## Arquitetura
 
-Diagrama de containers: [docs/architecture.md](docs/architecture.md).
-
-- Monorepo, um `go.mod`, um binário por serviço em `cmd/`.
+- Monorepo, um `go.mod`, um binário por serviço em `cmd/`. Containers: [docs/architecture.md](docs/architecture.md).
 - Portas e adaptadores com DDD tático leve: domínio puro, sem imports de infraestrutura; sem cerimônia estilo Java.
-- Contextos: canteen (núcleo, contém os módulos ledger e identity), payments (integração com o Pix), notifications (genérico: só entrega mensagens).
-- Ledger e identity: schema próprio, acessados só pela sua porta, sem FK para outros contextos. Ledger append-only: nada é editado ou apagado.
-- Síncrono na transação: autorização de compra, cadastro, estorno. Todo o resto por evento (Kafka), publicado via outbox.
-- Stack: PostgreSQL, sqlc + pgx, goose, Kafka (franz-go), OpenTelemetry, golangci-lint. Ver tabela no README.
-
-## Convenções
-
-@docs/conventions.md
-
-## Fluxo por entrega
-
-Do plano ao código, cada nível detalha o anterior:
-
-1. **Entrega** no [roadmap](docs/roadmap.md), que é o backlog. O refinamento começa pela skill `/refine`, que indica os passos seguintes, um por sessão.
-2. **Caso de uso** detalhado em `docs/use-cases/`, pela skill `/use-case`, quando a entrega for um caso de uso. Lista as specs que o implementam.
-3. **Discovery** (condicional) em `docs/discovery/`, pela skill `/discovery`, quando houver decisão cara de reverter com alternativas reais: compara as opções e recomenda. Não detalha o nível anterior, prepara as decisões dos seguintes; também antecede ADR de item de harness ou técnico, sem spec. As decisões saem:
-   - nas ADRs;
-   - no `domain.md`;
-   - na spec.
-4. **Spec** em `docs/specs/`, pela skill `/spec` (template em [.claude/skills/spec/template.md](.claude/skills/spec/template.md)): critérios de aceite numerados e testáveis, e as tarefas de implementação. Item de harness ou técnico não tem spec: o escopo fica no corpo da issue.
-5. **Issues** criadas já prontas para começar, pela skill `/cards`, no [quadro](https://github.com/users/betoth/projects/1).
-
-Cada etapa (caso de uso, discovery, ADR, spec e o refino de item de harness ou técnico) roda numa sessão própria, pela seção Sessões. Num refino com etapas em várias sessões, cada sessão chama a `/refine` de novo, que segue do ponto em que parou. O cadastro fecha o refino: no item de harness ou técnico, depois do Ready; no caso de uso, quando a última spec é aprovada.
-
-## Fluxo por tarefa
-
-1. **Branch** pela seção Git de `docs/conventions.md`.
-2. **Testes** derivados dos critérios de aceite que a tarefa cobre.
-3. **Implementação.**
-4. **Verificação:** `make check` (build, lint, testes) verde. Enquanto o Makefile não tiver o alvo `check`, `go build ./... && go vet ./... && go test ./...` na raiz e `go -C tools build -o /dev/null ./... && go -C tools vet ./... && go -C tools test ./...` para o módulo `tools/`.
-5. **Checkpoint de entendimento:** perguntar ao dono se quer rodar o `/checkpoint`. Só ele aciona.
-6. **Diário e roadmap:** entrada do dia em `docs/journal.md`, pela skill `/journal` (com os pontos do checkpoint, se houver), e marcação no roadmap da entrega que a tarefa conclui, para irem no mesmo PR e passarem pela revisão.
-7. **Revisão** pelo agent `reviewer`, sobre a branch. Bloqueante: corrigir (pelo modo da tarefa) ou o dono descarta com motivo. Sugestão não aplicada: o dono confirma se segue com ela pendente. Depois de corrigir bloqueante, nova rodada; só bloqueante obriga outra rodada. Se ainda houver bloqueante após a terceira rodada, parar e pedir ao dono para decidir. Mudança depois do PR aberto: nova rodada e seção `## Review` do PR atualizada, exceto quando muda só `docs/ai-costs.csv` e `docs/ai-costs.md` (custo de IA).
-8. **PR** e testes do card, pela skill `/cards`.
-
-Cada tarefa roda numa sessão própria, pela seção Sessões.
-
-Pronto = `make check` verde + diário e roadmap atualizados + revisão sem bloqueante pendente + testes do card marcados (pela regra da skill `/cards`).
+- Contextos: canteen (núcleo, com os módulos ledger e identity), payments (Pix), notifications (só entrega).
+- Ledger e identity: schema próprio, acesso só pela porta, sem FK para outros contextos. Ledger append-only.
+- Síncrono na transação: autorização de compra, cadastro, estorno. O resto por evento (Kafka), via outbox.
 
 ## Divisão do trabalho
 
 | Modo | Tarefas | Papel do Claude | Modelo |
 |---|---|---|---|
 | Manual | núcleo do domínio e regras de negócio; código cuja correção depende de concorrência, transação ou consistência entre sistemas; invariantes; primeira implementação de cada padrão novo | **Não escreve código de produção.** Testes são escritos em par. Explica conceitos, revisa, aponta bugs e faz perguntas. | Opus |
-| Pareado | integrações com sistemas externos; novas instâncias de padrões já implementados manualmente; specs, ADRs e documentação | Propõe e escreve junto; o dono revisa e decide. | Opus |
-| Delegado | boilerplate; infraestrutura e configuração (build, CI, containers); ferramentas de apoio (simuladores, script de dados de demo, dados de teste); dashboards | Faz, verifica e reporta. | Sonnet |
+| Pareado | integrações com sistemas externos; novas instâncias de padrões já implementados manualmente; issues, ADRs e documentação | Propõe e escreve junto; o dono revisa e decide. | Opus |
+| Delegado | boilerplate; infraestrutura e configuração (build, CI, containers); ferramentas de apoio (simuladores, dados de demo e de teste); dashboards | Faz, verifica e reporta. | Sonnet |
 
-Na dúvida sobre o modo de uma tarefa, perguntar antes de escrever código.
-
-O modelo é escolhido no início da sessão (`/model sonnet` ou `/model opus`) e não muda no meio, porque a troca descarta o cache. Na dúvida sobre o modo, Opus. Ao identificar o modo da tarefa, o Claude avisa se o modelo ativo não é o da tabela.
-
-## Sessões
-
-- Uma sessão por etapa do fluxo. O estado passa de uma sessão para a próxima pelos documentos e pela issue, não pela conversa.
-- Ao fechar uma etapa, o Claude sugere `/clear` e dá a frase de retomada (ex.: "continue a issue #16, próximo passo: skills"). Etapa fechada:
-  - documento da etapa (caso de uso, discovery, ADR, spec) revisado e gravado; na última spec de um caso de uso, só depois do cadastro das issues;
-  - issue cadastrada;
-  - PR aberto.
-- Antes de sugerir o `/clear`, o que a próxima sessão precisa saber já está gravado (checkbox da issue, documento, diário).
-- O hook `SessionStart` de retomada (`.claude/hooks/resume.sh`) injeta a branch, a issue e os passos abertos; "continue" basta. Na `main` ou em branch sem issue, o hook não acha a issue, e a frase de retomada completa é a que vale.
+Na dúvida sobre o modo, perguntar antes de escrever código. O modelo é escolhido no início da sessão e não muda no meio (a troca descarta o cache); na dúvida, Opus.
 
 ## Interação
 
-- O passo seguinte do fluxo documentado é executado sem pedir confirmação.
 - Sempre perguntar antes de:
   - decisão de domínio ou de arquitetura;
   - ação externa ou irreversível (push, PR, issue, card);
   - mudança de escopo;
   - checkpoint.
-- Perguntas fechadas e independentes vão juntas num só `AskUserQuestion`. Perguntas abertas e de discussão, uma por vez.
-
-## Instruções de compactação
-
-Ao compactar, preservar:
-
-- arquivos alterados na sessão;
-- achados da revisão e o que foi feito com cada um;
-- decisões tomadas e o motivo;
-- issue e passo em andamento.
-
-## Harness
-
-- Fluxos reutilizáveis do Claude ficam em skills (`.claude/skills/<nome>/SKILL.md`), não em commands (`.claude/commands/`). Command só quando tiver vantagem clara sobre skill, registrando o motivo.
-- Por padrão, skills podem ser acionadas automaticamente pela `description`. Usar `disable-model-invocation: true` quando só o usuário deve decidir o momento (ex.: checkpoint).
-- Agents (`.claude/agents/`) só quando o contexto isolado trouxer vantagem: olhar sem viés da conversa que produziu o trabalho, restrição de ferramentas (ex.: só leitura) ou paralelismo e volume. Fora isso, skill.
+- O passo seguinte do fluxo documentado é executado sem pedir confirmação.
+- Perguntas fechadas e independentes juntas num só `AskUserQuestion`; abertas, uma por vez.
 
 ## Git
 
 - Commit só quando pedido. Nunca push sem pedido.
+
+## Compactação
+
+Preservar:
+
+- arquivos alterados;
+- achados da revisão e o que foi feito com cada um;
+- decisões e o motivo;
+- issue e passo em andamento.

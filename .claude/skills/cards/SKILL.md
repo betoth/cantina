@@ -8,7 +8,7 @@ Cards do roadmap: **$ARGUMENTS**
 
 ## Forma de conduzir
 
-- Uma pergunta por vez. Esperar a resposta antes da próxima.
+- Perguntas fechadas e independentes juntas; abertas, uma por vez.
 - Mensagens curtas: no chat, tabelas resumidas; o texto completo vai nas issues.
 - Toda alteração no GitHub (criar, editar, mover card, marcar item, comentar, fechar): mostrar antes exatamente o que será feito e esperar o ok.
 
@@ -17,10 +17,10 @@ Cards do roadmap: **$ARGUMENTS**
 | Peça | Regra |
 |---|---|
 | Milestone | uma por fase: `Fase N: tema` (tema da tabela do roadmap) |
-| Issue | uma por checkbox de entrega da fase ou tarefa de spec, criada só depois de refinada (skill `/refine`), no formato de [template.md](template.md), em português |
+| Issue | uma por checkbox de entrega da fase, e uma sub-issue por tarefa de caso de uso, criadas só depois de refinadas (skill `/refine`), no formato de [template.md](template.md), em português |
 | Quadro | Project `Cantina` (https://github.com/users/betoth/projects/1), público, ligado ao repositório, campo Status com A fazer, Em andamento, Em revisão, Feito |
 | Automações do quadro | item adicionado → A fazer; PR ligado à issue → Em revisão; item fechado ou PR mergeado → Feito; item reaberto → Em andamento. Podem rodar fora de ordem: ver Conferir o card, em Acompanhar |
-| PR | formato pela seção Git de `docs/conventions.md`; o merge fecha a issue |
+| PR | formato pela seção Git de `docs/conventions.md`; o merge fecha a issue, exceto no PR de refino (seção Git de `docs/conventions.md`) |
 
 ## Preparação
 
@@ -44,14 +44,15 @@ Chamado pela skill `/refine`, com o corpo da issue já aprovado pelo usuário.
 
 1. Criar a milestone e as labels que faltarem.
 2. Criar a issue (`gh issue create --body-file`) e adicioná-la ao quadro (a automação põe em A fazer).
-3. Entrega do roadmap: acrescentar o link no checkbox: `- [ ] UC-OPER-01 Registrar compra ([#12](url))`.
+3. Caso de uso: criar as sub-issues de tarefa depois da mãe, ligá-las a ela (`gh api graphql`, mutation `addSubIssue`) e registrar as dependências entre elas pelo "blocked by" nativo (mutation `addBlockedBy`).
+4. Entrega do roadmap: acrescentar o link no checkbox: `- [ ] UC-OPER-01 Registrar compra ([#12](url))`.
 
 ## Acompanhar
 
 - Início de uma entrega: só issue Ready (critérios da skill `/refine`); se faltar algo, refinar antes. Card para Em andamento; branch pela seção Git de `docs/conventions.md`.
 - Passo da issue concluído: marcar o checkbox no corpo da issue.
 - Antes da revisão: marcar no roadmap o checkbox da entrega que a branch conclui (regras da skill `/roadmap`). Entrega com várias issues (caso de uso com tarefas): marcar na branch cuja sub-issue for a única ainda aberta da entrega.
-- Antes do PR: revisão pelo agent `reviewer` (fluxo por tarefa do `CLAUDE.md`).
+- Antes do PR: revisão pelo agent `reviewer` (skill `/task`).
 - Conferir o card, depois de abrir e de mergear o PR:
   - esperar cerca de 30 s (`sleep 30` no mesmo comando do `gh project item-list`);
   - fora do status esperado, mover o card;
@@ -68,9 +69,9 @@ Chamado pela skill `/refine`, com o corpo da issue já aprovado pelo usuário.
       - resultado.
   - Falhou: comentar o que falhou na issue; card de volta para Em andamento.
   - Item de teste sem marcar: não seguir para o merge, exceto `(manual, depois do merge)`, executado no passo PR mergeado.
-- Custo de IA, antes do merge, na branch: `make costs` e `go -C tools run ./tokencost report -root "$PWD" -issue N -comment`, que cria ou atualiza o comentário de custo na issue. O `docs/ai-costs.csv` e o `docs/ai-costs.md` atualizados vão no PR, sem nova rodada de revisão (exceção do fluxo por tarefa no `CLAUDE.md`). O custo de depois desse passo só entra numa execução seguinte.
+- Custo de IA, antes do merge, na branch: `make costs` e `go -C tools run ./tokencost report -root "$PWD" -issue N -comment`, que cria ou atualiza o comentário de custo na issue. O `docs/ai-costs.csv` e o `docs/ai-costs.md` atualizados vão no PR, sem nova rodada de revisão (exceção do passo Revisão da skill `/task`). O custo de depois desse passo só entra numa execução seguinte.
 - PR mergeado:
-  - confirmar que a issue fechou;
+  - confirmar que a issue fechou (PR de refino: segue aberta);
   - Conferir o card; status esperado Feito;
   - testes `(manual, depois do merge)`: executar, marcar e registrar como os manuais. Falhou:
     - comentar o que falhou e reabrir a issue;
@@ -80,7 +81,7 @@ Chamado pela skill `/refine`, com o corpo da issue já aprovado pelo usuário.
 
 ## Issue fora do roadmap
 
-Origem principal: a seção Tarefas de uma spec aprovada. Cada tarefa vira uma issue, com a spec nas Referências e os critérios de aceite que cobre na seção Testes.
+Origem principal: o fatiamento de um caso de uso na `/refine`. Cada tarefa vira uma sub-issue, com os critérios de aceite (`CA-NN`) que cobre.
 
 - Parte de uma entrega: sub-issue da issue da entrega (`gh api graphql`, mutation `addSubIssue`), título com o ID da mãe: `[UC-OPER-01] Lançamento em partida dobrada`. A automação põe a sub-issue no quadro.
 - Atravessa várias entregas: issue própria com o tipo no título (`[Técnico] Schema do ledger com migrations`), milestone da fase e, nas Referências, todas as entregas atendidas com link (`Relacionada a #12, #13`). Não entra no roadmap.
