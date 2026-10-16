@@ -73,35 +73,35 @@ Simplificações, substituídas em fases seguintes:
 
 Casos de uso:
 
-- [ ] UC-OPER-01 Registrar compra
+- [ ] UC-OPER-01 Registrar compra ([#20](https://github.com/betoth/cantina/issues/20))
 - [ ] UC-OPER-02 Estornar compra
 - [ ] UC-RESP-02 Consultar saldo e extrato
 
 Requisitos não funcionais:
 
-- [ ] RNF-CARGA-03 20 compras simultâneas na mesma carteira
-- [ ] RNF-PRIV-04 Isolamento por escola
+- [ ] RNF-CARGA-03 20 compras simultâneas na mesma carteira ([#24](https://github.com/betoth/cantina/issues/24))
+- [ ] RNF-PRIV-04 Isolamento por escola ([#23](https://github.com/betoth/cantina/issues/23))
 - [ ] RNF-PRIV-05 Logs sem dado pessoal
-- [ ] RNF-RET-01 Ledger, compras, estornos e trilha de auditoria permanentes
-- [ ] RNF-AUD-01 Ações de pessoa auditadas
+- [ ] RNF-RET-01 Ledger, compras, estornos e trilha de auditoria permanentes ([#21](https://github.com/betoth/cantina/issues/21), [#23](https://github.com/betoth/cantina/issues/23), [#26](https://github.com/betoth/cantina/issues/26))
+- [ ] RNF-AUD-01 Ações de pessoa auditadas ([#26](https://github.com/betoth/cantina/issues/26))
 - [ ] RNF-AUD-02 Alterações de saldo pelo sistema auditadas
-- [ ] RNF-AUD-03 Tentativas recusadas registradas
-- [ ] RNF-AUD-04 Conteúdo do registro de auditoria
-- [ ] RNF-AUD-05 Trilha append-only
-- [ ] RNF-AUD-06 Auditoria na mesma transação da ação
+- [ ] RNF-AUD-03 Tentativas recusadas registradas ([#26](https://github.com/betoth/cantina/issues/26))
+- [ ] RNF-AUD-04 Conteúdo do registro de auditoria ([#26](https://github.com/betoth/cantina/issues/26))
+- [ ] RNF-AUD-05 Trilha append-only ([#26](https://github.com/betoth/cantina/issues/26))
+- [ ] RNF-AUD-06 Auditoria na mesma transação da ação ([#26](https://github.com/betoth/cantina/issues/26))
 - [ ] RNF-OBS-01 Traces
 - [ ] RNF-OBS-02 Métricas técnicas
 - [ ] RNF-OBS-04 Logs em JSON com ID do trace
 
 Técnico:
 
-- [ ] Layout `cmd/` e `internal/`
-- [ ] Migrations por módulo
-- [ ] `tools/go.mod` com goose e sqlc
-- [ ] Makefile com `check`
+- [ ] Layout `cmd/` e `internal/` ([#21](https://github.com/betoth/cantina/issues/21))
+- [ ] Migrations por módulo ([#21](https://github.com/betoth/cantina/issues/21))
+- [ ] `tools/go.mod` com goose e sqlc ([#21](https://github.com/betoth/cantina/issues/21))
+- [ ] Makefile com `check` ([#21](https://github.com/betoth/cantina/issues/21))
 - [ ] golangci-lint configurado, com `errorlint`, também no módulo `tools/`
 - [ ] `.editorconfig`
-- [ ] Compose com Postgres
+- [ ] Compose com Postgres ([#23](https://github.com/betoth/cantina/issues/23))
 - [ ] `.env.example`
 - [ ] CI no GitHub Actions em todo PR e push na `main`: lint, testes unitários e de integração, build
 - [ ] CI confere que o código gerado pelo sqlc está atualizado
@@ -109,9 +109,9 @@ Técnico:
 - [ ] Proteção da `main`: merge só com CI verde
 - [ ] Repositório só com squash merge e branch apagada após o merge
 - [ ] Template de PR pela seção Git de `conventions.md`
-- [ ] API HTTP mínima
-- [ ] Coleção de requests
-- [ ] Testes de integração com testcontainers
+- [ ] API HTTP mínima ([#23](https://github.com/betoth/cantina/issues/23))
+- [ ] Coleção de requests ([#23](https://github.com/betoth/cantina/issues/23))
+- [ ] Testes de integração com testcontainers ([#21](https://github.com/betoth/cantina/issues/21))
 - [ ] Instrumentação com OpenTelemetry, exportando só OTLP
 - [ ] OpenTelemetry Collector no compose
 - [ ] Jaeger no compose (traces)
@@ -302,7 +302,7 @@ Requisitos não funcionais:
 
 Técnico:
 
-- [ ] Remoção do seed por insert direto
+- [ ] Remoção do comando de seed
 - [ ] Bootstrap do primeiro admin (só se não existir nenhum; e-mail por configuração)
 - [ ] Script de dados de demo pela API de cadastro
 
