@@ -38,5 +38,8 @@ A retro muda o ambiente, não o código: para cada problema, pergunta o que no h
 ## Fechamento
 
 6. Mostrar os candidatos, do mais grave ao menos, cada um com o momento da sessão, a categoria e a correção, numerados para o dono escolher.
-7. Aplicar só os escolhidos, na branch da issue, pelo modo dela, e registrar no diário (Aprendizados e revisões) cada correção aplicada: o achado, a causa no harness e a regra ou o check que entrou. Depois, nova rodada do `reviewer` sobre a mudança.
-8. Ao abrir o PR (passo PR da `/task`), o mesmo registro vai na seção `## Review` dele.
+7. Aplicar só os escolhidos, pelo modo da issue, na branch:
+   - issue de harness: a dela;
+   - outra issue (produto, técnico, refino): uma própria a partir da `main`, `feat/<N>-harness-<slug>` com `N` da issue da sessão, para revisar e reverter o harness sem a entrega. Correção que depende da entrega fica na branch da issue.
+8. Registrar no diário (Aprendizados e revisões), na branch da issue, cada correção aplicada: o achado, a causa no harness e a regra ou o check que entrou. Depois, nova rodada do `reviewer` sobre a mudança.
+9. PR da branch própria: título `feat(harness): ...`, referência à issue pela seção Git de `docs/conventions.md` e o mesmo registro no `## Review`. Na branch da issue, o registro vai no `## Review` do PR dela (passo PR da `/task`).

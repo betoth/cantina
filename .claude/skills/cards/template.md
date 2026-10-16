@@ -12,7 +12,7 @@ Metadados:
 - `não-planejado` quando o item entrou depois do roadmap validado.
 - Sub-issue: ligada à mãe e com as dependências pelo "blocked by" nativo do GitHub.
 
-Corpo: as seções marcadas com um tipo só entram nas issues desse tipo.
+Corpo: seção com tipo entre parênteses no título só entra nas issues desse tipo, e o marcador sai do título ao cadastrar. Seção sem marcador entra em todas.
 
 - Caso de uso: issue mãe.
 - Tarefa: sub-issue de caso de uso.
@@ -31,55 +31,51 @@ Por que esta entrega existe e onde se encaixa na fase. Uma a três frases.
 - Domínio: seções do `docs/domain.md` que se aplicam (caso de uso, tarefa)
 - ADRs: (quando houver)
 
-## Objetivo
+## Objetivo (caso de uso)
 
-Caso de uso. Como <ator>, quero <ação>, para que <benefício>.
+Como <ator>, quero <ação>, para que <benefício>.
 
-## Fluxos
+## Fluxos (caso de uso)
 
-Caso de uso, resumidos.
+Resumidos.
 
 - Principal: ...
 - Alternativos e exceções:
   - **<situação>:** o que acontece.
 
-## Decisões
+## Decisões (caso de uso)
 
-Caso de uso. Decisões do grilling que não viraram ADR, cada uma com o porquê.
+Decisões do grilling que não viraram ADR, cada uma com o porquê.
 
 - ...
 
-## Tarefas
+## Tarefas (caso de uso)
 
-Caso de uso. As sub-issues, na ordem de execução, com os critérios que cobrem.
+As sub-issues, na ordem de execução, com os critérios que cobrem.
 
 - [ ] #N Nome da fatia (CA-01, CA-02)
 
-## Fatia
+## Fatia (tarefa)
 
-Tarefa. A fatia vertical (tracer bullet) que esta tarefa entrega, verificável sozinha. Uma a três frases.
+A fatia vertical (tracer bullet) que esta tarefa entrega, verificável sozinha. Uma a três frases.
 
 - Demonstração: o comportamento que se mostra quando ela estiver pronta.
 - Onde testar: o seam combinado no refino (ex.: porta do ledger, API HTTP).
 
-## Critérios de aceite
+## Critérios de aceite (tarefa)
 
-Tarefa. Numerados na sequência do caso de uso; cada um vira ao menos um teste.
+Numerados na sequência do caso de uso; cada um vira ao menos um teste.
 
 - **CA-01.** **Dado** ..., **quando** ..., **então** ...
 
-## Escopo
-
-Harness ou técnico.
+## Escopo (harness ou técnico)
 
 - Entra: ...
 - Não entra: ...
 - Critérios: ...
 - Onde testar: o seam combinado no refino (técnico).
 
-## Passos
-
-Tarefa, harness ou técnico.
+## Passos (tarefa, harness ou técnico)
 
 - [ ] Branch e card em Em andamento
 - [ ] Ciclo por critério (teste vermelho, código mínimo, repete)
@@ -90,9 +86,7 @@ Tarefa, harness ou técnico.
 - [ ] Retro (perguntada ao dono)
 - [ ] PR
 
-## Testes
-
-Tarefa, harness ou técnico.
+## Testes (tarefa, harness ou técnico)
 
 - [ ] (automático) CA-01: comportamento verificado: `TestNome`
 - [ ] (automático) bug: teste que reproduz o defeito, vermelho antes da correção: `TestNome`

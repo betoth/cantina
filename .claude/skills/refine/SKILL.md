@@ -49,6 +49,8 @@ Documentos de `docs/` são lidos por seção: primeiro o índice de títulos (`g
 ## Durante o grilling
 
 - Termo ou regra de domínio novo ou mudado, ou questão em aberto respondida: atualizar `docs/domain.md` na hora, pela `/domain`, e citar a seção na issue.
+- Decisão que muda o texto de um item do roadmap (desta fase ou de outra): atualizar o item na hora, pela `/roadmap`.
+- Edições em `docs/` durante o grilling ficam na árvore de trabalho, sem branch: a branch nasce no passo 10, com o número da issue mãe.
 - Fato de mercado ou de ferramenta que uma decisão precisa: `/research`. O resultado entra na rodada como contexto da decisão.
 - ADR (`/adr`) só quando a decisão é, ao mesmo tempo:
   - difícil de reverter;
@@ -93,8 +95,11 @@ A issue está pronta quando tem:
 
 ## Fechamento
 
-7. Mostrar o texto completo de cada issue e perguntar se pode cadastrar.
+7. Escrever cada issue num arquivo do scratchpad (usado depois no `--body-file`), mostrar no chat, uma vez, o texto completo que foi escrito, sem reler o arquivo, e perguntar se pode cadastrar.
 8. Com o ok, cadastrar pela skill `/cards`: milestone se faltar, issue mãe, sub-issues com o "blocked by", quadro, link no roadmap.
-9. Em `docs/use-cases.md`, o ID do caso vira link para a issue mãe. Caso de uso com detalhe legado em `docs/use-cases/`: o conteúdo já está na issue mãe; apagar o arquivo.
-10. Arquivos alterados no refino (`docs/domain.md`, ADR, detalhe legado apagado): branch `docs/<N>-refine-<slug>`, com `N` da issue mãe; revisão pelo agent `reviewer` com as regras do passo Revisão da skill `/task`; PR de refino pela seção Git de `docs/conventions.md`, depois de perguntar.
+9. Em `docs/use-cases.md`, o ID do caso vira link para a issue mãe. Caso de uso com detalhe legado em `docs/use-cases/`, antes de apagar o arquivo:
+   - questões em aberto dele vão para o `docs/domain.md`, pela `/domain`: respondidas, na seção do tema; abertas, em Questões em aberto;
+   - nomes e IDs que ele definia (ex.: "spec 0003") são procurados em `docs/`; referência que fica (ex.: em ADR, que é registro) vai anotada no PR de refino;
+   - o resto já está na issue mãe; apagar o arquivo.
+10. Arquivos alterados no refino (`docs/domain.md`, ADR, detalhe legado apagado): branch `docs/<N>-refine-<slug>`, com `N` da issue mãe e slug em inglês (ex.: `docs/20-refine-register-purchase`); revisão pelo agent `reviewer` com as regras do passo Revisão da skill `/task`; PR de refino pela seção Git de `docs/conventions.md`, depois de perguntar.
 11. Sugerir `/clear` e dar a frase de retomada: `/task #N` com a primeira issue a executar.
