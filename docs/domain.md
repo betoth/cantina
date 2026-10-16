@@ -192,7 +192,7 @@ Vale para toda operação que muda saldo: compra, estorno e pedido de recarga.
 - Conjunto de regras por aluno, versionado e imutável: cada alteração cria nova versão.
 - Modos: lista de bloqueio ou lista de permissão. Alvos: produto ou categoria.
 - Precedência: produto vence categoria; em empate, bloqueio vence.
-- Limite diário de valor, com dia no fuso da escola.
+- Limite diário de valor, com dia no fuso da escola. Opcional: sem limite configurado, a compra não tem limite diário, só o saldo.
 - Concorrência otimista: versão inteira por aluno, exposta via ETag/If-Match; conflito retorna 409.
 - Compra concorrente com alteração de regras: a compra usa a versão vigente no momento da sua transação e a registra. Alteração confirmada vale da compra seguinte em diante; nenhuma compra usa versão que não estava vigente.
 - A compra registra a versão aplicada. Cache invalidado pelo evento de alteração, mas a autorização sempre confere a versão no banco.
@@ -203,6 +203,7 @@ Vale para toda operação que muda saldo: compra, estorno e pedido de recarga.
 - O QR nunca contém a matrícula ou outro dado previsível: quem conhece a matrícula não pode gerar o QR de outro aluno.
 - Matrícula digitada pelo operador é a alternativa quando o aluno está sem o QR.
 - Reemitir o QR gera um token novo e invalida o anterior.
+- Aluno não identificado (QR inexistente ou reemitido, matrícula inexistente ou de outra escola) não gera tentativa de compra nem registro de auditoria no MVP.
 - Cartão com chip (RFID/NFC) fica para a v2.
 
 ## Bloqueio de carteira

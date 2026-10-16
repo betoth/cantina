@@ -38,7 +38,7 @@ Comum a todo ator com login.
 
 | ID | Caso de uso |
 |---|---|
-| [UC-OPER-01](use-cases/UC-OPER-01-registrar-compra.md) | Registrar compra para um aluno identificado por QR ou matrícula |
+| [UC-OPER-01](https://github.com/betoth/cantina/issues/20) | Registrar compra para um aluno identificado por QR ou matrícula |
 | UC-OPER-02 | Estornar compra (com supervisor quando exigido) |
 | UC-OPER-03 | Marcar produto como disponível ou esgotado hoje (só a disponibilidade, sem alterar outros dados do produto) |
 | UC-OPER-04 | Consultar o que o aluno pode comprar: cardápio filtrado pelas regras dele, saldo e limite restante do dia |

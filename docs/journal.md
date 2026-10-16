@@ -154,13 +154,15 @@ Com os primeiros números do `tokencost`, fiz um discovery do custo de tokens ([
 - O prefixo fixo é relido do cache a cada request, então cada 1 k tokens a mais pesa em toda a sessão. Mesmo assim, 2 k de prefixo valem pouco perto do contexto que cresce numa sessão longa.
 - A memória do projeto (`CLAUDE.md` com `conventions.md`) subiu de ~2,5 k para ~4,3 k tokens com as regras desta issue. Reduzir custo também acrescenta texto fixo.
 
-## 2026-10-15 · Fase 1: fluxo enxuto (refino numa sessão, issue no lugar da spec)
+## 2026-10-15 · Fase 1: fluxo enxuto e refino do UC-OPER-01 (Registrar compra)
 
 ### Feito
 
 O projeto tinha cerca de 4.150 linhas de docs e skills e nenhuma linha de Go de produção. Reestruturei o harness para um fluxo enxuto inspirado em mattpocock/skills ([#18](https://github.com/betoth/cantina/issues/18)): o refino roda numa sessão só, por grilling em rodadas, e o resultado vai para o corpo da issue (mãe do caso de uso e sub-issues por fatia vertical, com critérios `CA-NN` e "blocked by"). `/spec`, `/use-case` e `/discovery` saíram; entraram `/research` (sem arquivo), `/task` (execução da issue até o PR) e `/retro`.
 
 O `CLAUDE.md` caiu de 109 para 50 linhas, sem importar o `conventions.md`, e o harness ganhou o `docs/harness.md` e um teste em `tools/` que falha com link relativo quebrado.
+
+Com o fluxo novo, refinei o primeiro caso de uso real, UC-OPER-01 Registrar compra, numa sessão só. Virou a issue mãe [#20](https://github.com/betoth/cantina/issues/20) e seis fatias com 31 critérios: transação em partida dobrada ([#21](https://github.com/betoth/cantina/issues/21)), débito sem saldo negativo sob concorrência ([#22](https://github.com/betoth/cantina/issues/22)), compra pela API ([#23](https://github.com/betoth/cantina/issues/23)), limite diário ([#24](https://github.com/betoth/cantina/issues/24)), idempotência ([#25](https://github.com/betoth/cantina/issues/25)) e auditoria ([#26](https://github.com/betoth/cantina/issues/26)). O detalhe legado em `docs/use-cases/` saiu, porque o conteúdo está na #20.
 
 ### Decisões
 
@@ -172,6 +174,11 @@ O `CLAUDE.md` caiu de 109 para 50 linhas, sem importar o `conventions.md`, e o h
   - a `/retro` nesta mesma issue.
 - Divergi da fonte num ponto: a `/task` continua lendo o `conventions.md` antes de implementar. São regras curtas, e lê-las antes evita rodadas de revisão.
 - O corpo do PR com evidência e risco do merge ficou como item próprio no roadmap.
+- No refino da compra, a Fase 1 ficou com identificação, catálogo, limite diário, saldo, idempotência e auditoria. Regras, bloqueio e avisos vão para a Fase 3, e o consentimento para a Fase 4. Assim a compra nasce com o risco de concorrência resolvido, e as fases seguintes só acrescentam verificações.
+- Os itens técnicos da fase (layout, migrations, Makefile com `check`, testcontainers, API mínima, Postgres no compose) entram na primeira fatia que os usa, sem issue própria. CI, lint e observabilidade continuam com issues próprias.
+- O seed é um comando Go que usa as portas, não SQL: o ledger só se acessa pela porta, e o saldo inicial precisa de lançamento.
+- Correção de harness vinda da retro de uma issue que não é de harness vai em branch e PR próprios a partir da `main`, e não junto com a entrega. É a prática comum de mercado: revisar e reverter o harness sem mexer na entrega. Com o merge por squash, um commit separado no mesmo PR não bastaria.
+- Aluno não identificado não gera tentativa nem auditoria no MVP, e o limite diário é opcional. As duas regras foram para o `domain.md`.
 
 ### Aprendizados e revisões
 
@@ -186,3 +193,13 @@ O `CLAUDE.md` caiu de 109 para 50 linhas, sem importar o `conventions.md`, e o h
   - o `reviewer` busca por `git grep --untracked`, que também vê os arquivos novos (as ferramentas Grep e Glob não existem nesta instalação);
   - a `/task` diz que `/checkpoint` e `/retro` só abrem quando o dono digita;
   - o teste do `tools/` roda sem cache.
+- A `/retro` do refino da compra virou oito correções no harness:
+  - a decisão sobre QR inválido ficou só na issue, porque a `/refine` apagava o detalhe legado sem antes levar as questões em aberto dele ao `domain.md`; agora leva;
+  - a ADR 0006 ficou citando "spec 0003", que só existia no arquivo apagado; a `/refine` passou a procurar em `docs/` os nomes que o detalhe legado definia e anotar no PR o que ficar;
+  - o item de seed da Fase 5 ficou contradizendo uma decisão do grilling; decisão que muda um item do roadmap atualiza o item na hora;
+  - os links dos RNFs e itens técnicos no roadmap saíram sem critério; a `/cards` linka cada sub-issue que atende o checkbox, e ele é marcado na branch da última sub-issue ainda aberta;
+  - as sub-issues saíram com a seção Escopo, que é de outro tipo; o template marca o tipo no título de cada seção, e o marcador sai no cadastro;
+  - a branch nasceu com slug em português; o passo 10 da `/refine` pede slug em inglês, com exemplo;
+  - a branch nasceu antes de existir o número da issue e foi renomeada duas vezes; agora as edições do grilling ficam na árvore de trabalho e a branch nasce no passo 10;
+  - os rascunhos das issues foram lidos duas vezes; agora ficam no scratchpad e vão ao chat uma vez.
+- Nos outros achados do `reviewer` (critério já verdadeiro, RNF coberto pela metade, erros de header sem definição), a regra existia e não foi cumprida.
