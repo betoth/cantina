@@ -29,7 +29,7 @@ flowchart LR
     B --> C[Commits]
     C --> R{Revisão sem bloqueante?}
     R -- não --> C
-    R -- sim --> D["PR com Closes #N (refino: Refs #N)"]
+    R -- sim --> D["PR com Closes #N (refino ou harness da retro: Refs #N)"]
     D --> E{"CI verde e testes do card marcados (regra da /cards)?"}
     E -- não --> C
     E -- sim --> F[Squash na main]
@@ -38,7 +38,7 @@ flowchart LR
 
 - Commits no formato [Conventional Commits](https://www.conventionalcommits.org): `feat(ledger): add double-entry transaction`.
 - Branch por issue: `<tipo>/<issue>-<slug>`, ex.: `feat/12-register-purchase`.
-- PR com título no formato do commit. Corpo com as seções `## Summary`, `## Tests` (testes do card) e `## Review` (cada achado da revisão e o que foi feito: corrigido, descartado com motivo ou sugestão pendente com motivo), e `Closes #N`. PR de refino (branch `docs/<N>-refine-<slug>`) não fecha a issue: cita `Refs #N` no lugar do `Closes`, e o `## Tests` diz que não há testes de card.
+- PR com título no formato do commit. Corpo com as seções `## Summary`, `## Tests` (testes do card) e `## Review` (cada achado da revisão e o que foi feito: corrigido, descartado com motivo ou sugestão pendente com motivo), e `Closes #N`. PR de refino (branch `docs/<N>-refine-<slug>`) e PR de harness vindo da `/retro` de outra issue (branch `feat/<N>-harness-<slug>`) não fecham a issue: citam `Refs #N` no lugar do `Closes`, o `## Tests` do PR de refino diz que não há testes de card, e o do PR de harness lista os checks rodados.
 - Merge por squash: um commit por PR na `main`.
 
 ## Dados
