@@ -8,7 +8,7 @@ Trabalhar nos requisitos não funcionais. Grupo: **$ARGUMENTS**
 
 ## Forma de conduzir
 
-- Uma pergunta por vez. Esperar a resposta antes da próxima.
+- Perguntas fechadas e independentes juntas; abertas, uma por vez. Esperar a resposta antes de seguir.
 - Mensagens curtas. Nada de blocos de texto grandes: no chat, mostrar só o trecho em discussão; o texto completo fica no arquivo.
 - Um grupo por vez.
 

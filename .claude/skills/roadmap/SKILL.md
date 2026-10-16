@@ -9,7 +9,7 @@ Trabalhar no roadmap: **$ARGUMENTS**
 
 ## Forma de conduzir
 
-- Uma pergunta por vez. Esperar a resposta antes da próxima.
+- Perguntas fechadas e independentes juntas; abertas, uma por vez. Esperar a resposta antes de seguir.
 - Mensagens curtas. Nada de blocos de texto grandes: no chat, mostrar uma fase por vez.
 
 ## Preparação
@@ -46,6 +46,7 @@ Ao criar, replanejar ou quando pedido, verificar e reportar uma lacuna por vez:
 
 - Depois que o roadmap foi gerado e validado pelo usuário, todo item novo em qualquer fase (planejada ou em andamento) entra marcado com `*(não planejado)*` depois do texto. Assim o plano original fica distinguível do que surgiu na execução.
 - Entrega concluída: marcar o checkbox. Fase com todas as entregas marcadas e critério de pronto atendido: situação `concluída`.
+- O roadmap mostra o estado atual, inclusive nas fases concluídas: artefato removido ou substituído sai do item ou é reescrito, sem nota de "substituído por". O que mudou e por quê vai no diário.
 
 ## Fechamento
 

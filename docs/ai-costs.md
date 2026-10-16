@@ -3,16 +3,16 @@
 
 Custo de tokens do Claude Code por issue, a partir de [`ai-costs.csv`](ai-costs.csv). Inclui o `overhead`: chamadas que o Claude Code cobra e o transcript não registra.
 
-Dados até 2026-10-09.
+Dados até 2026-10-16.
 
 ## Custo por issue
 
 ```mermaid
 xychart-beta
     title "Custo por issue (US$)"
-    x-axis ["sem issue", "#2", "#3", "#6", "#7", "#9", "#11", "#12"]
+    x-axis ["sem issue", "#2", "#3", "#6", "#7", "#9", "#11", "#12", "#16", "#18"]
     y-axis "US$"
-    bar [52.1946, 5.0819, 2.0224, 19.8174, 4.4679, 2.2922, 9.1305, 3.3871]
+    bar [57.8945, 5.0819, 2.0224, 19.8174, 4.4679, 2.8084, 9.8496, 3.8092, 7.8240, 6.9684]
 ```
 
 ## Custo acumulado por semana
@@ -20,7 +20,7 @@ xychart-beta
 ```mermaid
 xychart-beta
     title "Custo acumulado por semana (US$)"
-    x-axis ["2026-10-05"]
+    x-axis ["2026-10-05", "2026-10-12"]
     y-axis "US$"
-    line [98.3940]
+    line [111.6709, 120.5437]
 ```

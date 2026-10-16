@@ -11,14 +11,14 @@ Objetivo: confirmar que o usuário domina as decisões e o código da tarefa: o 
 
 ## Forma de conduzir
 
-- Uma pergunta por vez. Esperar a resposta antes da próxima.
+- Perguntas fechadas e independentes juntas; abertas, uma por vez. Esperar a resposta antes de seguir.
 - Mensagens curtas.
 - O usuário responde sem olhar o código. Não mostrar código na pergunta.
 
 ## Preparação
 
 1. Se `$ARGUMENTS` estiver vazio, usar a última tarefa concluída na conversa.
-2. Ler o que mudou na tarefa (`git diff`, `git status`, arquivos citados na conversa), a spec e as ADRs relacionadas.
+2. Ler o que mudou na tarefa (`git diff`, `git status`, arquivos citados na conversa), a issue (critérios de aceite) e as ADRs relacionadas.
 3. Escolher de 3 a 6 perguntas sobre o que é crítico na tarefa: concorrência, transação, invariantes, consistência entre sistemas, decisões de desenho. Nada de sintaxe ou nomes de função.
 
 ## Tipos de pergunta

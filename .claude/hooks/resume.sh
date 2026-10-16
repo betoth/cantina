@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # SessionStart hook: reports the work in progress so a fresh session (startup or
-# /clear) can resume with just "continue". Emits JSON: additionalContext goes to
+# /clear) can resume with just "/task #N". Emits JSON: additionalContext goes to
 # Claude's context, systemMessage is shown to the user.
 # Never fails the session: errors are swallowed and the script exits 0.
 
@@ -18,7 +18,7 @@ if [[ -n "$issue" ]] && command -v gh >/dev/null; then
     context+=$'\n'"Issue ${header}"$'\n'"Passos abertos:"$'\n'"${steps}"
     next=$(head -n 1 <<<"$steps" | sed -E 's/^- \[ \] //')
     if [[ -n "$next" ]]; then
-      message="Retomando ${header}. Próximo passo: ${next}. Digite \"continue\"."
+      message="Retomando ${header}. Próximo passo: ${next}. Digite \"/task #${issue}\"."
     else
       message="Retomando ${header}. Sem passos abertos."
     fi

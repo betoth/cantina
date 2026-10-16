@@ -8,13 +8,13 @@ Trabalhar nas convenções: **$ARGUMENTS**
 
 ## Forma de conduzir
 
-- Uma pergunta por vez. Esperar a resposta antes da próxima.
+- Perguntas fechadas e independentes juntas; abertas, uma por vez. Esperar a resposta antes de seguir.
 - Mensagens curtas.
 
 ## Preparação
 
 1. Ler `docs/conventions.md` (se existir), `CLAUDE.md` e o código relacionado à convenção.
-2. Se o arquivo não existir, criá-lo com as seções que já tiverem conteúdo real, entre: idiomas, linguagem (ex.: Go), testes, dados, documentação, processo. Garantir que `CLAUDE.md` o importa com `@docs/conventions.md`.
+2. Se o arquivo não existir, criá-lo com as seções que já tiverem conteúdo real, entre: idiomas, linguagem (ex.: Go), testes, dados, documentação, processo. O `CLAUDE.md` não o importa: a skill `/task` o lê antes de implementar, o agent `reviewer` o cobra na revisão, e o `CLAUDE.md` só aponta para ele.
 
 ## Regras
 
